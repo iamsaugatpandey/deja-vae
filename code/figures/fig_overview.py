@@ -109,7 +109,7 @@ def panel_b(fig, ax):
     ax.axvspan(8, 18, color=BLUE, alpha=0.06, lw=0)
     ax.set_xlim(1, 25); ax.set_ylim(0, 1.0); ax.set_xticks([2, 8, 12, 18, 24]); ax.set_xlabel("DINOv3 layer")
     ax.set_ylabel("AUROC (GenImage)")
-    ax.set_title("b  Visible mid-network, gone at the end", pad=4)
+    ax.set_title("b  Strong mid-network, weak at the end", pad=4)
 
 
 def panel_c(fig, ax):

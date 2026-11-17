@@ -5,6 +5,7 @@ images, through each method's own degraded-image pipeline, and the threshold sta
   SimLBR (released):    squash to 256 -> blur -> JPEG q95 -> DINOv3 final CLS (exactly the cls_degraded path of features)
 200 fakes per GenImage generator (seed 3). Reports TPR@5% on the same fakes unblurred (existing scores) and blurred.
     DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python dv_evasion.py   -> runs/dv2/evasion.txt
+    DV_WORK=runs/dv DV_FEAT=cls24 anchor/bin/python dv_evasion.py  -> runs/dv/evasion.txt (final-layer heads)
 """
 import os, sys
 os.environ.setdefault("DV_FEAT", "mid"); os.environ.setdefault("DV_WORK", "runs/dv2")
@@ -56,7 +57,10 @@ def main():
         with torch.no_grad():
             bl = [h(torch.from_numpy(X.astype(np.float32))).squeeze(1).numpy() for h in heads]
         report({"dv-single": "Deja VAE-I", "dv": "Deja VAE-P"}[v], [S[v][s][0] for s in (0, 1, 2)], bl)
-    j = dv.MID.index(dv.TF_LAYER); a, b = A[:, j * 1024:(j + 1) * 1024].astype(np.float32), B[:, j * 1024:(j + 1) * 1024].astype(np.float32)
+    if dv.FEAT == "mid":
+        j = dv.MID.index(dv.TF_LAYER); a, b = A[:, j * 1024:(j + 1) * 1024].astype(np.float32), B[:, j * 1024:(j + 1) * 1024].astype(np.float32)
+    else:   # final-layer work folder (runs/dv, DV_FEAT=cls24): the training-free score reads the final-layer class token
+        a, b = A.astype(np.float32), B.astype(np.float32)
     tf = -np.log(np.clip(1 - (a * b).sum(1) / (np.linalg.norm(a, axis=1) * np.linalg.norm(b, axis=1)), 1e-6, None))
     report("Deja VAE-TF", [S["dv-tf"][0][0]], [tf])
     head = ap.head_from_state(load_file(hf_hub_download("MVRL/SimLBR", "genimage/model.safetensors")))

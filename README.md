@@ -114,7 +114,9 @@ Rebuilding the benchmark variants:
 | Sec. 8: AEROBLADE without the re-save | `aeroblade.py --set sb_raw` | `run_review.sh` |
 | Sec. 8: decoder bank (Table 3) and post-hoc SDXL analysis | `dv_bank_sb.py`, `dv_bank_sdxl.py`, `dv_bank_sb_crop.py` | `run_e5b.sh`, `run_e5b_resume.sh`, `run_review2.sh` |
 | Sec. 9: fusion (Fig. 8) | `figures/fig_fusion.py` | |
-| App. E: one factor at a time (Table 5), pilot exclusion, final layer on Synthbuster | `review_cpu.py`, `review_cpu2.py`, `review_layer_sb.py`, `dejavae.py` (`dv-single-nocf`) | `run_review.sh`, `run_review2.sh`, `run_review_cpu.sh` |
+| App. E: layer and counterfactual ablations (Table 5), pilot exclusion, final layer on Synthbuster (both matchings) | `review_cpu.py`, `review_cpu2.py`, `review_layer_sb.py`, `sb_crop_prefill.py`, `dejavae.py` (`dv-single-nocf`) | `run_review.sh`, `run_review2.sh`, `run_review3.sh`, `run_review_cpu.sh` |
+| App. E: linear vs MLP heads; final-layer heads under processing and blur | `review_linear.py`, `dv_resize.py`, `dv_evasion.py` (with `DV_WORK=runs/dv DV_FEAT=cls24`) | `run_review3.sh`, `run_review_cpu.sh` |
+| Sec. 8: exact decoder vs best other autoencoder (AUROC margins) | `review_bank_margin.py` | `run_review_cpu.sh` |
 | App. I: training-data scale | `scale_report.py` | `run_scale.sh` |
 | App. A, Limitations: test-time cost per image | `latency.py` (`latency.py aero 4` for AEROBLADE) | `run_review2.sh` |
 

@@ -18,7 +18,7 @@ BASE = {"simlbr_official": "SimLBR_released", "lbr_exact": "SimLBR_retrained", "
 DETERMINISTIC = {"rigid-dinov2", "rigid-dinov2~norm", "rigid-dinov3", "dv-tf"}
 DVNAME = {"dv-single": "DejaVAE_I", "dv": "DejaVAE_P", "dv-nocf": "DejaVAE_P_noCF", "dv-single-nocf": "DejaVAE_I_noCF", "dv-tf": "DejaVAE_TF"}
 SETS = {"genimage": ["dv2", "dv4", "dv"], "cham": ["dv2", "dv4", "dv"], "cham_m": ["dv2"], "cham_c": ["dv2"], "sb": ["dv2", "dv4", "dv"],
-        "sb_crop": ["dv2"]}
+        "sb_crop": ["dv2", "dv"]}
 TAG = {"dv2": "", "dv4": "_SD1decoder", "dv": "_finallayer"}   # dv: heads on the final-layer class token (App. E)
 PUBLIC = {"genimage": "genimage", "cham": "chameleon", "cham_m": "chameleon_size_matched", "cham_c": "chameleon_processing_control",
           "sb": "synthbuster_geometry_matched", "sb_crop": "synthbuster_crop_matched", "sb_raw": "synthbuster_no_resave"}
