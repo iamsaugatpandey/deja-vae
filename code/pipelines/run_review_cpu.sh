@@ -8,6 +8,8 @@ $P review_downscale.py               # Synthbuster: score vs downscale factor of
 $P review_layer_sb.py                # Synthbuster: final layer vs layers 8-18, both matchings (needs run_review3.sh)
 $P review_linear.py                  # linear vs MLP heads at the final layer and at layers 8-18
 DV_FEAT=mid $P review_bank_margin.py # exact decoder vs best other autoencoder, both matchings
+$P review_sb_testthr.py               # final layer vs SimLBR on Synthbuster at equal FPR (test-real threshold), AUROC
+$P review_copies.py                   # GPU, ~15 min: detectors scored on autoencoder copies of real photographs
 $P sb_extra.py sb; $P sb_extra.py sb_crop      # extra paired comparisons, both matchings
 $P sb_cluster.py; $P sb_cluster.py pergen      # Synthbuster intervals resampled by RAISE photograph
 $P dejavae.py report --set sb_crop; $P aeroblade.py report --set sb_raw

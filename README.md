@@ -17,8 +17,8 @@ pip install numpy pandas
 python reproduce_main_table.py ../data/scores
 ```
 
-This recomputes every cell of Table 1 (TPR at 5% and 1% FPR, worst generator, and false-positive rate on degraded reals,
-for GenImage, Chameleon and Synthbuster) and of Table 2 (Synthbuster with downscaled and with cropped reals) from the
+This recomputes every cell of Table 2 (TPR at 5% and 1% FPR, worst generator, and false-positive rate on degraded reals,
+for GenImage, Chameleon and Synthbuster) and of Table 3 (Synthbuster with downscaled and with cropped reals) from the
 released per-image scores.
 
 ## Contents
@@ -30,9 +30,9 @@ data/
   scores/<benchmark>.csv.gz   per-image scores of every method and seed (see "Score files" below)
   scores/aeroblade_*.csv.gz   AEROBLADE LPIPS distances on the fixed stratified subsets
   matching/                   lists that rebuild size-matched Chameleon, its control and the Synthbuster split
-  decoder_bank_synthbuster_prespecified.txt   Table 3 (top) as produced before the post-hoc SDXL analysis
+  decoder_bank_synthbuster_prespecified.txt   Table 1 (top) as produced before the post-hoc SDXL analysis
   decoder_bank_synthbuster_with_posthoc.txt   the same report including the post-hoc SDXL 1.0 column
-  decoder_bank_synthbuster_cropped.txt        Table 3 (bottom): the bank with cropped reals
+  decoder_bank_synthbuster_cropped.txt        Table 1 (bottom): the bank with cropped reals
 code/
   requirements.txt
   reproduce_main_table.py     Tables 1 and 2 from data/scores
@@ -59,8 +59,8 @@ One row per evaluation image (calibration and test splits). Columns:
   degraded copy of the same image, which is only used for test reals.
 
 Deterministic methods have a single seed column (RIGID, Déjà VAE-TF). The released SimLBR head is one fixed model, so its
-three seed columns are identical. Methods ending in `_SD1decoder` are the retrained detectors of Section 6 (Table 7);
-methods ending in `_finallayer` read the final-layer class token instead of layers 8-18 (App. E, Table 5).
+three seed columns are identical. Methods ending in `_SD1decoder` are the retrained detectors of Section 5 (Table 7);
+methods ending in `_finallayer` read the final-layer class token instead of layers 8-18 (Sec. 7.1, App. E, Table 5).
 `synthbuster_crop_matched.csv.gz` has the same generated images as `synthbuster_geometry_matched.csv.gz`, with cropped reals.
 `aeroblade_synthbuster_no_resave.csv.gz` scores the same subset rows as stored, without the JPEG q95 re-save.
 Fusions are not stored; they are the sum of two scores, each standardised on the calibration reals
@@ -100,24 +100,20 @@ Rebuilding the benchmark variants:
 | Sec. 3: training rows, Déjà VAE heads, evaluation | `dejavae.py`, `anchor_pilot.py` | `run_dv2.sh` |
 | Sec. 3: baselines (SimLBR, probes) | `anchor_pilot.py` | `run_p2.sh`, `run_p3.sh`, `run_p4.sh`, `run_chameleon.sh` |
 | Sec. 3: RIGID, AEROBLADE | `rigid.py`, `aeroblade.py` | `run_baselines.sh`, `run_e3.sh`, `run_rigid_norm.sh` |
-| Sec. 3: layer pilot | `dv_layers.py` | |
-| Sec. 4: layer curves, copy conditions (Fig. 2) | `dv_layers_full.py` | `run_e1e2e4.sh` |
-| Sec. 4: CLIP layer curve | `dv_layers_clip.py` | `run_after_e5b.sh` |
-| Sec. 6: processing (Fig. 3), processing-aware training | `dv_resize.py`, `dejavae.py` (`DV_AUG=post`) | `run_dv3.sh` |
-| Sec. 6: decoder bank (Fig. 4), BigGAN resolution control | `dv_bank_full.py`, `dv_bank_res.py` | `run_e1e2e4.sh` |
-| Sec. 6: GenImage bank with JPEG q95 re-save (Fig. 4), original files (App. G) | `dv_bank_q95.py`, `dv_bank_full.py`, `review_cpu2.py` | `run_review.sh`, `run_review_cpu.sh` |
-| Sec. 6: blurred generated images (evasion) | `dv_evasion.py` | `run_review.sh` |
-| Sec. 6: copies from SD1's decoder (Table 7) | `dejavae.py` (`DV_AE=...`), `e8_compare.py` | `run_after_e5b.sh` |
-| Sec. 7: Chameleon audit and decomposition (Figs. 5, 6) | `cham_match.py`, `e6_decomp.py` | `run_e6.sh`, `run_e6c.sh` |
-| Sec. 8: Synthbuster (Fig. 7, Table 1) | `synthbuster_prep.py`, `sb_extra.py` | `run_e5.sh` |
-| Sec. 8: cropped reals (Table 2, App. F), photograph-level intervals, downscale factor | `synthbuster_crop.py`, `sb_cluster.py`, `review_downscale.py` | `run_review.sh`, `run_review_cpu.sh` |
-| Sec. 8: AEROBLADE without the re-save | `aeroblade.py --set sb_raw` | `run_review.sh` |
-| Sec. 8: decoder bank (Table 3) and post-hoc SDXL analysis | `dv_bank_sb.py`, `dv_bank_sdxl.py`, `dv_bank_sb_crop.py` | `run_e5b.sh`, `run_e5b_resume.sh`, `run_review2.sh` |
-| Sec. 9: fusion (Fig. 8) | `figures/fig_fusion.py` | |
-| App. E: layer and counterfactual ablations (Table 5), pilot exclusion, final layer on Synthbuster (both matchings) | `review_cpu.py`, `review_cpu2.py`, `review_layer_sb.py`, `sb_crop_prefill.py`, `dejavae.py` (`dv-single-nocf`) | `run_review.sh`, `run_review2.sh`, `run_review3.sh`, `run_review_cpu.sh` |
-| App. E: linear vs MLP heads; final-layer heads under processing and blur | `review_linear.py`, `dv_resize.py`, `dv_evasion.py` (with `DV_WORK=runs/dv DV_FEAT=cls24`) | `run_review3.sh`, `run_review_cpu.sh` |
-| Sec. 8: exact decoder vs best other autoencoder (AUROC margins) | `review_bank_margin.py` | `run_review_cpu.sh` |
-| App. I: training-data scale | `scale_report.py` | `run_scale.sh` |
+| Sec. 3: layer pilot; Synthbuster matchings (downscaled, cropped) | `dv_layers.py`, `synthbuster_prep.py`, `synthbuster_crop.py` | `run_e5.sh`, `run_review.sh` |
+| Sec. 4: layer curves, copy conditions (Fig. 2); CLIP layer curve | `dv_layers_full.py`, `dv_layers_clip.py` | `run_e1e2e4.sh`, `run_after_e5b.sh` |
+| Sec. 5: Synthbuster decoder bank (Table 1), post-hoc SDXL analysis, cropped reals | `dv_bank_sb.py`, `dv_bank_sdxl.py`, `dv_bank_sb_crop.py` | `run_e5b.sh`, `run_e5b_resume.sh`, `run_review2.sh` |
+| Sec. 5: exact decoder vs best other autoencoder (AUROC margins) | `review_bank_margin.py` | `run_review_cpu.sh` |
+| Sec. 5, App. G: GenImage and Chameleon bank (Figs. 6, 7), BigGAN resolution control | `dv_bank_full.py`, `dv_bank_q95.py`, `dv_bank_res.py`, `review_cpu2.py` | `run_e1e2e4.sh`, `run_review.sh` |
+| Sec. 5, App. H: copies from SD1's decoder (Table 7) | `dejavae.py` (`DV_AE=...`), `e8_compare.py` | `run_after_e5b.sh` |
+| Sec. 6: main results (Table 2) | `dejavae.py report`, `reproduce_main_table.py` | `run_dv2.sh` |
+| Sec. 7: Synthbuster comparison (Fig. 3, Table 3, App. F), photograph-level intervals, downscale factor | `sb_extra.py`, `sb_cluster.py`, `review_downscale.py`, `aeroblade.py --set sb_raw` | `run_e5.sh`, `run_review.sh`, `run_review_cpu.sh` |
+| Sec. 7.1: final-layer head on both matchings; at equal FPR | `review_layer_sb.py`, `sb_crop_prefill.py`, `review_sb_testthr.py` | `run_review3.sh`, `run_review_cpu.sh` |
+| Sec. 8: processing (Fig. 4), processing-aware training, blurred generated images | `dv_resize.py`, `dejavae.py` (`DV_AUG=post`), `dv_evasion.py` | `run_dv3.sh`, `run_review.sh` |
+| Sec. 9, App. J: Chameleon audit (Fig. 5) and decomposition (Fig. 9) | `cham_match.py`, `e6_decomp.py` | `run_e6.sh`, `run_e6c.sh` |
+| Sec. 10, App. K: fusion (Fig. 10) | `figures/fig_fusion.py` | |
+| App. E: layer and counterfactual ablations (Table 5), pilot exclusion, linear vs MLP heads, final-layer heads under processing and blur, detectors scored on autoencoder copies | `review_cpu.py`, `review_cpu2.py`, `review_linear.py`, `review_copies.py`, `dv_resize.py`, `dv_evasion.py` (with `DV_WORK=runs/dv DV_FEAT=cls24`) | `run_review.sh`, `run_review3.sh`, `run_review_cpu.sh` |
+| App. I: training-data scale (Fig. 8) | `scale_report.py` | `run_scale.sh` |
 | App. A, Limitations: test-time cost per image | `latency.py` (`latency.py aero 4` for AEROBLADE) | `run_review2.sh` |
 
 Internal names in the code: `dv-single` = Déjà VAE-I, `dv` = Déjà VAE-P, `dv-tf` = Déjà VAE-TF, `lbr_exact` = SimLBR

@@ -1,4 +1,4 @@
-"""Recompute Tables 1 and 2 of the paper from the released per-image scores alone (no images, no GPU).
+"""Recompute Tables 2 and 3 of the paper from the released per-image scores alone (no images, no GPU).
     python reproduce_main_table.py ../data/scores
 Needs numpy and pandas. Thresholds: split conformal on the calibration reals (k = ceil((n+1)(1-eps))-th smallest score).
 TPR per generator, then mean and worst over generators; FPR on degraded test reals at the 5% threshold; mean over seeds.
@@ -58,8 +58,8 @@ T = pd.DataFrame(rows).pivot(index="method", columns="benchmark").round(1)
 pd.set_option("display.width", 250)
 print(T.reindex(METHODS).to_string())
 
-# Table 2: Synthbuster under two ways of matching the real photographs (mean/worst TPR@5%, FPR on matched test reals)
-print("\nTable 2 (Synthbuster, downscaled vs cropped reals): mean TPR@5, worst TPR@5, FPR on matched test reals")
+# Table 3: Synthbuster under two ways of matching the real photographs (mean/worst TPR@5%, FPR on matched test reals)
+print("\nTable 3 (Synthbuster, downscaled vs cropped reals): mean TPR@5, worst TPR@5, FPR on matched test reals")
 T2 = ["SimLBR_released", "supervised_probe", "reconstruction_probe", "DejaVAE_I", "DejaVAE_P",
       "DejaVAE_P+SimLBR_released", "DejaVAE_I+SimLBR_released"]
 for bench in ("synthbuster_geometry_matched", "synthbuster_crop_matched"):
