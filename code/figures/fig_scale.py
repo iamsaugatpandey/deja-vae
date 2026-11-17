@@ -2,9 +2,9 @@
 TPR@5% of SimLBR retrained (lbr_exact) and the plain supervised probe (sup) against the number of training images
 per class (nested subsets 1,250 / 2,500 / 5,000 / 10,000 real + SD1.4 fake), the released SimLBR head (162k per
 class), and Déjà VAE-I (zero generated images) as a reference band. Points: mean over 3 seeds; bars: 95% bootstrap
-intervals (calibration reals and each generator's test fakes resampled, B=500, seed-averaged).
+intervals (calibration reals and each generator's test fakes resampled, B=1000, seed-averaged).
 Data: runs/scale/nN, runs/p4s (GenImage), runs/cham_off (Chameleon), Déjà VAE scores via dejavae.py.
-    DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python paper/figures/fig_scale.py
+    DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python figures/fig_scale.py
 """
 import os, sys
 from pathlib import Path
@@ -16,7 +16,7 @@ from style import *          # noqa: F401,F403
 import anchor_pilot as ap
 import fig_fusion as ff
 
-NS = [1250, 2500, 5000, 10000]; REL = 162000; B = 500
+NS = [1250, 2500, 5000, 10000]; REL = 162000; B = 1000
 CACHE = Path("runs/scale/fig_boot.npz")
 SETS = {"genimage": "GenImage", "cham": "Chameleon"}
 

@@ -3,7 +3,7 @@ Forest of paired TPR@5% differences, one small multiple per benchmark (GenImage,
 Rows: fusion vs SimLBR alone, and fusion vs four control fusions. Half-eyes of paired bootstrap draws (B=1000; same
 resample of calibration reals and test fakes for both methods and every seed; seed-averaged), exactly the procedure of
 anchor_pilot.paired_bootstrap, but keeping the draws. Draws cached in runs/dv2/fusion_boot.npz.
-    DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python paper/figures/fig_fusion.py
+    DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python figures/fig_fusion.py
 """
 import os, sys
 from pathlib import Path
@@ -26,11 +26,11 @@ CACHE = Path("runs/dv2/fusion_boot.npz")
 def runs_for(name):
     rows, idx = dv.rows_of(name); ref = Path(dv.SETS[name][1])
     runs = dv.scores_for(name, rows, idx)
-    for m in ("simlbr_official", "sup", "recon", "rigid-dinov2"):
+    for m in [m for m in ("simlbr_official", "sup", "recon", "rigid-dinov2") if (ref / f"scores_{m}_seed0.npy").exists()]:
         runs[m] = {s: (np.load(ref / f"scores_{m}_seed{s}.npy"), np.load(ref / f"degscores_{m}_seed{s}.npy")) for s in (0, 1, 2)}
     ix = np.array(idx); runs = {m: {s: (a[ix], b[ix]) for s, (a, b) in v.items()} for m, v in runs.items()}
     rows = [rows[i] for i in idx]
-    for v in ("dv", "dv-single", "sup", "recon", "rigid-dinov2"):
+    for v in [v for v in ("dv", "dv-single", "sup", "recon", "rigid-dinov2") if v in runs]:
         runs[f"{v}+fuse-simlbr_official"] = {s: (dv.zfuse(runs[v][s][0], runs["simlbr_official"][s][0], rows)(runs[v][s][0], runs["simlbr_official"][s][0]), None) for s in (0, 1, 2)}
     return rows, runs
 

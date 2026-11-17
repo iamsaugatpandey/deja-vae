@@ -3,7 +3,7 @@
 # runs/dv/layers/report.txt). Writes to runs/dv2 (v1 in runs/dv stays untouched). Log: runs/dv2/dv.log.
 # Safe to re-run: every step resumes.   Status: ./dv_status.sh 2
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 export DV_WORK=runs/dv2 DV_FEAT=mid
 mkdir -p runs/dv2

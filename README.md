@@ -3,9 +3,9 @@
 Code, per-image scores and benchmark-matching lists for the paper of the same title (under review at TMLR).
 
 A latent diffusion model's output has already passed through the model's autoencoder, so encoding and decoding it again
-changes it very little. This repository measures when that "déjà vu" reveals a generated image: where it lives inside a
+changes it very little. This repository measures when that "déjà vu" reveals a generated image: where it is visible inside a
 frozen foundation model, which decoder it belongs to, and what removes it. The paper also includes a size-matched version of
-Chameleon and a geometry-matched evaluation of Synthbuster.
+Chameleon and two size-matched evaluations of Synthbuster (real photographs downscaled or cropped to each generated image's size).
 
 The repository contains **no dataset images**, apart from the two 256-pixel crops shown in Figure 1 and their autoencoder copies (`code/figures/fig1_assets/`). The datasets are available from their authors (see "Data").
 
@@ -18,7 +18,8 @@ python reproduce_main_table.py ../data/scores
 ```
 
 This recomputes every cell of Table 1 (TPR at 5% and 1% FPR, worst generator, and false-positive rate on degraded reals,
-for GenImage, Chameleon and Synthbuster) from the released per-image scores.
+for GenImage, Chameleon and Synthbuster) and of Table 2 (Synthbuster with downscaled and with cropped reals) from the
+released per-image scores.
 
 ## Contents
 
@@ -29,11 +30,12 @@ data/
   scores/<benchmark>.csv.gz   per-image scores of every method and seed (see "Score files" below)
   scores/aeroblade_*.csv.gz   AEROBLADE LPIPS distances on the fixed stratified subsets
   matching/                   lists that rebuild size-matched Chameleon, its control and the Synthbuster split
-  decoder_bank_synthbuster_prespecified.txt   Table 2 as produced before the post-hoc SDXL analysis
+  decoder_bank_synthbuster_prespecified.txt   Table 3 (top) as produced before the post-hoc SDXL analysis
   decoder_bank_synthbuster_with_posthoc.txt   the same report including the post-hoc SDXL 1.0 column
+  decoder_bank_synthbuster_cropped.txt        Table 3 (bottom): the bank with cropped reals
 code/
   requirements.txt
-  reproduce_main_table.py     Table 1 from data/scores
+  reproduce_main_table.py     Tables 1 and 2 from data/scores
   *.py                        experiments (see "Paper to code")
   pipelines/*.sh              the order in which the experiments were run
   figures/*.py                every figure in the paper
@@ -47,7 +49,8 @@ One row per evaluation image (calibration and test splits). Columns:
   - `genimage/`
   - `chameleon_data/`
   - `synthbuster/synthbuster/` for Synthbuster's generated images
-  - `synthbuster_real_matched/<generator>/<raise_id>.png` for RAISE-1k photographs matched to that generator's geometry
+  - `synthbuster_real_matched/<generator>/<raise_id>.png` for RAISE-1k photographs downscaled to that generator's geometry
+  - `synthbuster_real_cropped/<generator>/<raise_id>.png` for native-resolution crops of the same photographs (no resampling)
   - `cham_matched/` and `cham_ctrl/` for our transformed Chameleon fakes
 - `split`: `calib` or `test`.
 - `label`: 1 for generated, 0 for real.
@@ -56,7 +59,10 @@ One row per evaluation image (calibration and test splits). Columns:
   degraded copy of the same image, which is only used for test reals.
 
 Deterministic methods have a single seed column (RIGID, Déjà VAE-TF). The released SimLBR head is one fixed model, so its
-three seed columns are identical. Methods ending in `_SD1decoder` are the retrained detectors of Section 6 (Table 4).
+three seed columns are identical. Methods ending in `_SD1decoder` are the retrained detectors of Section 6 (Table 7);
+methods ending in `_finallayer` read the final-layer class token instead of layers 8-18 (App. E, Table 5).
+`synthbuster_crop_matched.csv.gz` has the same generated images as `synthbuster_geometry_matched.csv.gz`, with cropped reals.
+`aeroblade_synthbuster_no_resave.csv.gz` scores the same subset rows as stored, without the JPEG q95 re-save.
 Fusions are not stored; they are the sum of two scores, each standardised on the calibration reals
 (`reproduce_main_table.py` shows how).
 
@@ -66,7 +72,7 @@ Fusions are not stored; they are the sum of two scores, each standardised on the
 | `supervised_probe`, `reconstruction_probe` | Supervised probe, Reconstruction probe |
 | `RIGID_dinov2_pixel`, `RIGID_dinov2_norm`, `RIGID_dinov3` | RIGID variants |
 | `DejaVAE_I`, `DejaVAE_P`, `DejaVAE_TF` | Déjà VAE-I, -P, -TF |
-| `DejaVAE_P_noCF` | Déjà VAE-P trained without counterfactual reals |
+| `DejaVAE_P_noCF`, `DejaVAE_I_noCF` | Déjà VAE-P / -I trained without counterfactual reals |
 
 ## Data
 
@@ -81,8 +87,9 @@ dataset paths are set at the top of `prepare_genimage.py`, `cham_match.py` and `
 loaded by name from public Hugging Face repositories (Appendix A).
 
 Rebuilding the benchmark variants:
-- **Geometry-matched Synthbuster:** `synthbuster_prep.py make <RAISE_DIR>`. The split by RAISE id is listed in
+- **Synthbuster with downscaled reals:** `synthbuster_prep.py make <RAISE_DIR>`. The split by RAISE id is listed in
   `data/matching/synthbuster_raise_split.csv`, and the excluded photograph in `synthbuster_excluded.txt`.
+- **Synthbuster with cropped reals:** `synthbuster_crop.py make <RAISE_TIFF_DIR>` (after the step above; same ids and split).
 - **Size-matched Chameleon and its control:** `cham_match.py make` and `cham_match.py make_ctrl` (seed 17). The resulting
   image sizes are listed in `data/matching/` for checking.
 
@@ -98,12 +105,18 @@ Rebuilding the benchmark variants:
 | Sec. 4: CLIP layer curve | `dv_layers_clip.py` | `run_after_e5b.sh` |
 | Sec. 6: processing (Fig. 3), processing-aware training | `dv_resize.py`, `dejavae.py` (`DV_AUG=post`) | `run_dv3.sh` |
 | Sec. 6: decoder bank (Fig. 4), BigGAN resolution control | `dv_bank_full.py`, `dv_bank_res.py` | `run_e1e2e4.sh` |
-| Sec. 6: copies from SD1's decoder (Table 4) | `dejavae.py` (`DV_AE=...`), `e8_compare.py` | `run_after_e5b.sh` |
+| Sec. 6: GenImage bank with JPEG q95 re-save (Fig. 4), original files (App. G) | `dv_bank_q95.py`, `dv_bank_full.py`, `review_cpu2.py` | `run_review.sh`, `run_review_cpu.sh` |
+| Sec. 6: blurred generated images (evasion) | `dv_evasion.py` | `run_review.sh` |
+| Sec. 6: copies from SD1's decoder (Table 7) | `dejavae.py` (`DV_AE=...`), `e8_compare.py` | `run_after_e5b.sh` |
 | Sec. 7: Chameleon audit and decomposition (Figs. 5, 6) | `cham_match.py`, `e6_decomp.py` | `run_e6.sh`, `run_e6c.sh` |
 | Sec. 8: Synthbuster (Fig. 7, Table 1) | `synthbuster_prep.py`, `sb_extra.py` | `run_e5.sh` |
-| Sec. 8: decoder bank (Table 2) and post-hoc SDXL analysis | `dv_bank_sb.py`, `dv_bank_sdxl.py` | `run_e5b.sh`, `run_e5b_resume.sh` |
+| Sec. 8: cropped reals (Table 2, App. F), photograph-level intervals, downscale factor | `synthbuster_crop.py`, `sb_cluster.py`, `review_downscale.py` | `run_review.sh`, `run_review_cpu.sh` |
+| Sec. 8: AEROBLADE without the re-save | `aeroblade.py --set sb_raw` | `run_review.sh` |
+| Sec. 8: decoder bank (Table 3) and post-hoc SDXL analysis | `dv_bank_sb.py`, `dv_bank_sdxl.py`, `dv_bank_sb_crop.py` | `run_e5b.sh`, `run_e5b_resume.sh`, `run_review2.sh` |
 | Sec. 9: fusion (Fig. 8) | `figures/fig_fusion.py` | |
-| App. F: training-data scale | `scale_report.py` | `run_scale.sh` |
+| App. E: one factor at a time (Table 5), pilot exclusion, final layer on Synthbuster | `review_cpu.py`, `review_cpu2.py`, `review_layer_sb.py`, `dejavae.py` (`dv-single-nocf`) | `run_review.sh`, `run_review2.sh`, `run_review_cpu.sh` |
+| App. I: training-data scale | `scale_report.py` | `run_scale.sh` |
+| App. A, Limitations: test-time cost per image | `latency.py` (`latency.py aero 4` for AEROBLADE) | `run_review2.sh` |
 
 Internal names in the code: `dv-single` = Déjà VAE-I, `dv` = Déjà VAE-P, `dv-tf` = Déjà VAE-TF, `lbr_exact` = SimLBR
 retrained, `simlbr_official` = SimLBR released, `sup` = supervised probe, `recon` = reconstruction probe. The files

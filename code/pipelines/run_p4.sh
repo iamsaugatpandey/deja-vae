@@ -9,7 +9,7 @@
 #   runs/p2raw_off raw GenImage (paper protocol)
 # Log: runs/p4s/p4.log.  Safe to re-run.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 W=runs/p4s; SEEDS="0 1 2"
 mkdir -p $W

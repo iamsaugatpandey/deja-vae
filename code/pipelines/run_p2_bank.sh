@@ -1,7 +1,7 @@
 #!/bin/bash
 # Reconstruction bank (FLUX 16-ch, VQ, DC-AE) for the format-controlled run runs/p2. Resumable.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python; W=runs/p2
 exec >> $W/bank.log 2>&1
 echo "== $(date) bank start"

@@ -5,7 +5,7 @@
 # from runs/dv2 (symlinks); only the training pairs are recomputed. Log: runs/dv3/dv.log.
 # Safe to re-run.   Status: ./dv_status.sh 3
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 export DV_WORK=runs/dv3 DV_FEAT=mid DV_AUG=post
 mkdir -p runs/dv3

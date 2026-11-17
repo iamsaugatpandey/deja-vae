@@ -32,6 +32,8 @@ SETS = {   # name -> (manifest, folder holding the comparison methods' scores, t
     "cham_m": ("runs/cham_m/manifest.csv", "runs/cham_m", None),   # E6: fakes size-matched to the reals (cham_match.py)
     "cham_c": ("runs/cham_c/manifest.csv", "runs/cham_c", None),   # E6 control: same resize + JPEG, own aspect, no crop
     "sb": ("runs/sb/manifest.csv", "runs/sb", 95),                 # E5: Synthbuster + geometry-matched RAISE-1k reals
+    "sb_crop": ("runs/sb_crop/manifest.csv", "runs/sb_crop", 95),  # review: reals = native-resolution crops (no resampling)
+    "sb_raw": ("runs/sb/manifest.csv", "runs/sb_raw", None),       # review: Synthbuster without the JPEG q95 re-save
 }
 N_TRAIN = int(os.environ.get("DV_NTRAIN", 5000))
 LIMIT = int(os.environ.get("DV_LIMIT", 0))   # smoke test: keep ~LIMIT test rows per (split, label, source)
@@ -193,7 +195,8 @@ def rel_chunked(a, b, mode, fn=None, chunk=4096):
     return np.concatenate(out)
 
 
-VARIANTS = {"dv": ("rel", True), "dv-nocf": ("rel", False), "dv-single": ("single", True)}
+VARIANTS = {"dv": ("rel", True), "dv-nocf": ("rel", False), "dv-single": ("single", True),
+            "dv-single-nocf": ("single", False)}   # review ablation: image-only head without counterfactual rows
 if FEAT == "mid":
     VARIANTS["dv-prof"] = ("prof", True)
 
@@ -236,6 +239,8 @@ def scores_for(name, rows, idx=None):
     ix = np.arange(N) if idx is None else np.asarray(idx)   # only rows with features; others stay 0 and are cut later
     out = {}
     for v, (mode, _) in VARIANTS.items():
+        if not (W / f"head_{v}_seed0.pt").exists():   # variant not trained in this work folder
+            continue
         for seed in (0, 1, 2):
             head = ap.head_from_state(torch.load(W / f"head_{v}_seed{seed}.pt", map_location="cpu"))
             def f(k):
@@ -338,6 +343,6 @@ if __name__ == "__main__":
     t.add_argument("--steps", type=int, default=2000); t.add_argument("--batch", type=int, default=500)
     t.add_argument("--lr", type=float, default=1e-4); t.add_argument("--wd", type=float, default=1e-2)
     t.add_argument("--dropout", type=float, default=0.5)
-    r = sub.add_parser("report"); r.add_argument("--set", choices=["genimage", "cham", "cham_m", "cham_c", "sb"], required=True)
+    r = sub.add_parser("report"); r.add_argument("--set", choices=list(SETS), required=True)
     a = p.parse_args()
     dict(pairs=cmd_pairs, train=cmd_train, report=cmd_report)[a.cmd](a)

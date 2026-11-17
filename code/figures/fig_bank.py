@@ -5,7 +5,7 @@ Outlined: the generator's own autoencoder. Right column: the autoencoder that gi
 their strongest score (attribution), with its share. BigGAN is 128 px; the extra row thresholds it on GenImage
 reals downscaled to 128 px (dv_bank_res.py). Kandinsky 2.1 and 2.2 MoVQ are bit-identical, so MoVQ appears once.
 Data: runs/dv/bank_full (dv_bank_full.py, dv_bank_res.py).
-    anchor/bin/python paper/figures/fig_bank.py
+    anchor/bin/python figures/fig_bank.py
 """
 import os, sys, json
 from pathlib import Path
@@ -16,6 +16,8 @@ from style import *          # noqa: F401,F403
 from matplotlib.colors import LinearSegmentedColormap
 
 D = Path("runs/dv/bank_full")
+ORIG = os.environ.get("BANK_ORIG") == "1"   # 1: original files (JPEG reals vs PNG fakes) for the appendix
+DQ = D if ORIG else Path("runs/dv/bank_q95")   # GenImage rows: every view re-saved as JPEG q95 first (format parity)
 AES = [("sd1orig", "SD1\noriginal"), ("ftmse", "SD\nft-MSE"), ("sdxl", "SDXL\n(0.9)"), ("kd21", "Kandinsky\nMoVQ"),
        ("flux", "FLUX-\nfamily"), ("dcae", "DC-AE")]
 ROWS = [("gi:stable_diffusion_v_1_4", "SD1.4", "latent: SD1 AE", "sd1orig"),
@@ -26,19 +28,23 @@ ROWS = [("gi:stable_diffusion_v_1_4", "SD1.4", "latent: SD1 AE", "sd1orig"),
         ("gi:ADM", "ADM", "pixel space", None),
         ("gi:glide", "GLIDE", "", None),
         ("gi:BigGAN", "BigGAN (128 px)", "GAN", None),
-        ("res128", "  res.-matched reals", "", None),
+        *([("res128", "  res.-matched reals", "", None)] if ORIG else []),
         ("cham:fake", "Chameleon", "in the wild", None)]
 
 
 def scores():
     A = dict(np.load(D / "phi_v.npz")); R = {k: dict(np.load(D / f"phi_R_{k}.npz")) for k, _ in AES}
+    AQ = dict(np.load(DQ / "phi_v.npz")); RQ = {k: dict(np.load(DQ / f"phi_R_{k}.npz")) for k, _ in AES}
     C = dict(np.load(D / "res128.npz"))
 
     def dist(a, b):
         return 1 - (a * b).sum(2) / (np.linalg.norm(a, axis=2) * np.linalg.norm(b, axis=2) + 1e-8)
 
     def raw(k, g):
-        return np.log(dist(C["phi_v"], C[k]) + 1e-6) if g == "real128" else np.log(dist(A[g], R[k][g]) + 1e-6)
+        if g == "real128":
+            return np.log(dist(C["phi_v"], C[k]) + 1e-6)
+        a_, r_ = (AQ, RQ) if g.startswith("gi:") else (A, R)
+        return np.log(dist(a_[g], r_[k][g]) + 1e-6)
 
     def z(k, g, ref):
         d, r = raw(k, g), raw(k, ref)
@@ -83,7 +89,7 @@ def plot(T, ATT):
     ax.text(nc + 0.4, -0.25, "most often the\nstrongest (share)", ha="left", va="bottom", fontsize=6.8, color=INK2)
     ax.text(-4.3, -0.25, "generator family", ha="left", va="bottom", fontsize=6.8, color=INK2)
     ax.set_xlim(-4.35, nc + 2.6); ax.set_ylim(nr, -1.1); ax.axis("off")
-    save(fig, "bank")
+    save(fig, "bank_original" if ORIG else "bank")
 
 
 if __name__ == "__main__":

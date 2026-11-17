@@ -3,7 +3,7 @@
 # Reuses runs/p4s cached features (symlinks), so no image is re-processed. Heads train on CPU (light).
 # Log: runs/scale/scale.log. Report: runs/scale/report.txt. Safe to re-run.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 mkdir -p runs/scale
 exec >> runs/scale/scale.log 2>&1

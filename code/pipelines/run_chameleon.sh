@@ -5,7 +5,7 @@
 # Calibration: 30% of Chameleon reals (runs/cham/manifest.csv, split=calib) set each threshold.
 # Log: runs/cham/pipeline.log      Safe to re-run.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 W=runs/cham
 mkdir -p $W

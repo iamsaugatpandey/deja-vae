@@ -3,7 +3,7 @@
 Methods: Déjà VAE-P (v2), Déjà VAE-P with processing-aware training (v3), SimLBR (released).
 Point = mean over 3 generators (SD1.4, Wukong, Midjourney) and 3 seeds; thick/thin bars = 66%/95% bootstrap intervals
 (reals and each generator's fakes resampled, B=1000). Data: runs/dv{2,3}/resize/post_*.npz.
-    anchor/bin/python paper/figures/fig_processing.py
+    anchor/bin/python figures/fig_processing.py
 """
 import os, sys
 from pathlib import Path

@@ -1,4 +1,4 @@
-"""Recompute Table 1 of the paper from the released per-image scores alone (no images, no GPU).
+"""Recompute Tables 1 and 2 of the paper from the released per-image scores alone (no images, no GPU).
     python reproduce_main_table.py ../data/scores
 Needs numpy and pandas. Thresholds: split conformal on the calibration reals (k = ceil((n+1)(1-eps))-th smallest score).
 TPR per generator, then mean and worst over generators; FPR on degraded test reals at the 5% threshold; mean over seeds.
@@ -57,3 +57,17 @@ for bench in ("genimage", "chameleon", "synthbuster_geometry_matched"):
 T = pd.DataFrame(rows).pivot(index="method", columns="benchmark").round(1)
 pd.set_option("display.width", 250)
 print(T.reindex(METHODS).to_string())
+
+# Table 2: Synthbuster under two ways of matching the real photographs (mean/worst TPR@5%, FPR on matched test reals)
+print("\nTable 2 (Synthbuster, downscaled vs cropped reals): mean TPR@5, worst TPR@5, FPR on matched test reals")
+T2 = ["SimLBR_released", "supervised_probe", "reconstruction_probe", "DejaVAE_I", "DejaVAE_P",
+      "DejaVAE_P+SimLBR_released", "DejaVAE_I+SimLBR_released"]
+for bench in ("synthbuster_geometry_matched", "synthbuster_crop_matched"):
+    df = pd.read_csv(D / f"{bench}.csv.gz"); treal = ((df.split == "test") & (df.label == 0)).to_numpy()
+    cal = ((df.split == "calib") & (df.label == 0)).to_numpy()
+    print(f"  [{bench}]")
+    for m in T2:
+        runs = fused(df, m.split("+")[0], "SimLBR_released") if "+" in m else seeds(df, m)
+        r = evaluate(df, runs)
+        fpr = np.mean([100 * (x[treal] > tau(x[cal], 0.05)).mean() for x, _ in runs])
+        print(f"    {m:28s} {r[0]:5.1f} {r[1]:5.1f} {fpr:5.1f}")

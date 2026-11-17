@@ -6,7 +6,7 @@
 Lines: DINOv3 (blue) and DINOv2 (orange) class token, 95% bootstrap bands (reals and each generator's fakes
 resampled, B=1000). Grey: DINOv3 mean patch token, and PSNR(v, R(v)) as the pixel-space reference.
 Data: runs/dv/layers_full/*.npz (dv_layers_full.py). Draws cached in runs/dv/layers_full/boot.npz.
-    anchor/bin/python paper/figures/fig_layers.py
+    anchor/bin/python figures/fig_layers.py
 """
 import os, sys
 from pathlib import Path

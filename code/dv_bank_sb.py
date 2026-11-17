@@ -24,7 +24,8 @@ OUT = Path("runs/sb/bank"); OUT.mkdir(parents=True, exist_ok=True)
 N = 200
 BANK = {"sd1orig": "stable-diffusion-v1-5/stable-diffusion-v1-5:vae", "ftmse": "stabilityai/sd-vae-ft-mse",
         "sdxl": "stabilityai/sdxl-vae", "kd21": "kandinsky-community/kandinsky-2-1:movq", "flux": "ostris/Flex.1-alpha:vae",
-        "dcae": "mit-han-lab/dc-ae-f32c32-in-1.0-diffusers", "cdec": "openai/consistency-decoder"}
+        "dcae": "mit-han-lab/dc-ae-f32c32-in-1.0-diffusers", "cdec": "openai/consistency-decoder",
+        "sdxl10": "stabilityai/stable-diffusion-xl-base-1.0:vae_1_0"}   # sdxl10: post hoc (dv_bank_sdxl.py); not pre-specified
 OWN = {"stable-diffusion-1-3": "sd1orig", "stable-diffusion-1-4": "sd1orig", "stable-diffusion-2": "ftmse",
        "stable-diffusion-xl": "sdxl", "dalle3": "cdec"}
 

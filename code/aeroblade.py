@@ -33,7 +33,8 @@ AES = {   # name -> list of specs tried in order (first one that loads wins; mir
 }
 N = {"genimage": dict(calib=1000, real=1000, fake_per_src=250), "cham": dict(calib=1000, real=1000, fake_per_src=2000),
      "cham_m": dict(calib=1000, real=1000, fake_per_src=2000),
-     "sb": dict(calib=1000, real=1800, fake_per_src=200)}       # E5: 200 matched reals + 200 fakes per generator
+     "sb": dict(calib=1000, real=1800, fake_per_src=200),       # E5: 200 matched reals + 200 fakes per generator
+     "sb_raw": dict(calib=1000, real=1800, fake_per_src=200)}   # review: same subset as sb, no JPEG re-save
 
 
 def out_dir(s):
@@ -145,7 +146,7 @@ def cmd_report(a):
     for f in sorted(O.glob("scores_rigid*_seed0.npy")):        # subset-only RIGID sanity variants (raw / q95, noise space)
         m = f.stem[len("scores_"):-len("_seed0")]
         runs[m] = {s: (np.load(O / f"scores_{m}_seed{s}.npy"), np.load(O / f"degscores_{m}_seed{s}.npy")) for s in (0, 1, 2)}
-    dvr = dv.scores_for(a.set, rows, list(sub))
+    dvr = dv.scores_for(a.set, rows, list(sub)) if (dv.W / f"{a.set}_img_a.npy").exists() else {}   # sb_raw: AEROBLADE only
     for h in ("dv", "dv-single", "dv-tf"):
         if h in dvr:
             runs[h] = dvr[h]
@@ -184,6 +185,6 @@ def cmd_report(a):
 if __name__ == "__main__":
     p = argparse.ArgumentParser(); sub = p.add_subparsers(dest="cmd", required=True)
     for c in ("run", "report"):
-        s = sub.add_parser(c); s.add_argument("--set", choices=["genimage", "cham", "cham_m", "sb"], required=True)
+        s = sub.add_parser(c); s.add_argument("--set", choices=["genimage", "cham", "cham_m", "sb", "sb_raw"], required=True)
     a = p.parse_args()
     {"run": cmd_run, "report": cmd_report}[a.cmd](a)

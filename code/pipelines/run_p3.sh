@@ -8,7 +8,7 @@
 #  D                  score everything on Chameleon, eval both benchmarks
 # Log: runs/p2/p3.log     Progress: python3 check_progress.py --work runs/p2
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 W=runs/p2; C=runs/cham_p2
 SEEDS="0 1 2"

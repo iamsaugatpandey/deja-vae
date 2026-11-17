@@ -5,7 +5,7 @@
 #   then the same heads are scored on Chameleon (runs/cham_p2, features shared with runs/cham).
 # Log: runs/p2/pipeline.log   Progress: python3 check_progress.py --work runs/p2   Safe to re-run.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 W=runs/p2
 C=runs/cham_p2

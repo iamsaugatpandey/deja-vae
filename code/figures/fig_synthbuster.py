@@ -4,9 +4,10 @@
 (b) False-positive rate on each generator's geometry-matched TEST reals at that pooled threshold (nominal 5%):
     does matching the reals to a generator's size (e.g. shrinking a photograph to 256 px for GLIDE) itself trigger
     false alarms?
-Points: mean over seeds; bars: 95% bootstrap intervals (calibration reals, the generator's fakes and its test reals
-resampled, B=500). Draws cached in runs/sb/fig_boot.npz.
-    DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python paper/figures/fig_synthbuster.py
+Points: mean over seeds; bars: 95% bootstrap intervals (calibration reals resampled by RAISE photograph, i.e. all nine
+matched reals of a drawn photograph enter together; the generator's fakes and its test reals resampled; B=1000).
+Draws cached in runs/sb/fig_boot_photo.npz (the earlier image-level draws are in fig_boot.npz).
+    DV_WORK=runs/dv2 DV_FEAT=mid anchor/bin/python figures/fig_synthbuster.py
 """
 import os, sys
 from pathlib import Path
@@ -18,7 +19,7 @@ from style import *          # noqa: F401,F403
 import anchor_pilot as ap
 import fig_fusion as ff
 
-CACHE = Path("runs/sb/fig_boot.npz"); B = 500
+CACHE = Path("runs/sb/fig_boot_photo.npz"); B = 1000
 GENS = [("stable-diffusion-2", "SD 2", "our decoder (ft-MSE)"),
         ("stable-diffusion-1-3", "SD 1.3", "same encoder,\nother decoder"),
         ("stable-diffusion-1-4", "SD 1.4", ""),
@@ -40,7 +41,10 @@ def compute():
     ref = Path("runs/sb"); _, idx = __import__("dejavae").rows_of("sb"); ix = np.array(idx)
     runs["rigid-dinov3"] = {s: (np.load(ref / f"scores_rigid-dinov3_seed{s}.npy")[ix], None) for s in (0, 1, 2)}
     lab, split, src = ap.split_idx(rows); rng = np.random.default_rng(0)
-    cal = np.where((split == "calib") & (lab == 0))[0]
+    cal = np.where((split == "calib") & (lab == 0))[0]; C = {}
+    for i in cal:
+        C.setdefault(Path(rows[i]["path"]).stem, []).append(i)
+    C = list(C.values())
     fk = {g: np.where((split == "test") & (lab == 1) & (src == g))[0] for g, *_ in GENS}
     rl = {g: np.where((split == "test") & (lab == 0) & (src == g))[0] for g, *_ in GENS}
     res = {}
@@ -48,7 +52,7 @@ def compute():
         seeds = [s for s in (0, 1, 2) if s in runs[m]]
         T = np.zeros((B + 1, len(GENS))); F = np.zeros((B + 1, len(GENS)))
         for b in range(B + 1):
-            c = cal if b == 0 else rng.choice(cal, len(cal))
+            c = cal if b == 0 else np.concatenate([C[k] for k in rng.integers(0, len(C), len(C))])
             for j, (g, *_) in enumerate(GENS):
                 f = fk[g] if b == 0 else rng.choice(fk[g], len(fk[g])); r = rl[g] if b == 0 else rng.choice(rl[g], len(rl[g]))
                 t_, f_ = [], []

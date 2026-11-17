@@ -1,7 +1,7 @@
 """Figures for the Chameleon audit (C6).
   chameleon_audit.pdf   (a) one dot per image: width x height, real vs generated; (b) metadata-only AUROC, original vs size-matched
   chameleon_decomp.pdf  processing cost vs shortcut cost per detector (paired bootstrap half-eyes, zero lines)
-Run from the repo root:  anchor/bin/python paper/figures/fig_chameleon.py
+Run from the repo root:  anchor/bin/python figures/fig_chameleon.py
 """
 import sys
 from pathlib import Path

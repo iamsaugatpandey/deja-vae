@@ -3,7 +3,7 @@
 #   RIGID (TMLR): DINOv2 ViT-L/14 as published, and DINOv3 ViT-L/16 for backbone parity.
 # Log: runs/baselines.log. Safe to re-run (finished scores are skipped).
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 P=anchor/bin/python
 exec >> runs/baselines.log 2>&1
 for bb in dinov2 dinov3; do

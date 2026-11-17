@@ -9,8 +9,9 @@
 (b) Where: AUROC of the training-free signal per DINOv3 layer, GenImage mean over 8 generators (blue, 95% band), and
     blurred reals vs reals (grey; high = mistakes blur for generation). Cache: runs/dv/layers_full/boot.npz.
 (c) Which decoder: training-free TPR at 5% FPR with the generator's exact decoder (filled) vs a near-identical
-    version of it (open), and the web (Chameleon, best of seven autoencoders).
-    anchor/bin/python paper/figures/fig_overview.py
+    version of it (open). Synthbuster: lossless, no re-save. GenImage: every image re-saved as JPEG q95 first (its reals are
+    JPEG and its fakes PNG; runs/dv/bank_q95). Chameleon: best of seven autoencoders.
+    anchor/bin/python figures/fig_overview.py
 """
 import os, sys
 from pathlib import Path
@@ -112,10 +113,10 @@ def panel_b(fig, ax):
 
 
 def panel_c(fig, ax):
-    rows = [("GenImage SD1.4, SD1.5, Wukong", 100.0, 40.3, "SD1 decoder", "its fine-tuned version"),
-            ("Synthbuster SD 1.3, 1.4", 99.25, 23.5, "SD1 decoder", "its fine-tuned version"),
+    rows = [("Synthbuster SD 1.3, 1.4", 99.25, 23.5, "SD1 decoder", "its fine-tuned version"),
             ("Synthbuster SD 2", 95.0, 16.0, "fine-tuned decoder", "the original"),
-            ("Synthbuster SDXL$^\\dagger$", 100.0, 7.0, "SDXL 1.0", "SDXL 0.9")]
+            ("Synthbuster SDXL$^\\dagger$", 100.0, 7.0, "SDXL 1.0", "SDXL 0.9"),
+            ("GenImage SD1.4, SD1.5, Wukong (JPEG q95)", 65.7, 52.0, "SD1 decoder", "its fine-tuned version")]
     for i, (lab, own, other, lo_lab, ot_lab) in enumerate(rows):
         ax.plot([other, own], [i, i], color=GRID, lw=2.2, solid_capstyle="round", zorder=1)
         ax.plot([own], [i], "o", ms=5, color=BLUE, zorder=3); ax.plot([other], [i], "o", ms=5, mfc="white", mec=BLUE, mew=1.0, zorder=3)
@@ -129,7 +130,7 @@ def panel_c(fig, ax):
     ax.set_xlabel("generated images caught at 5% FPR (%), no training")
     ax.plot([], [], "o", color=BLUE, ms=4.5, label="exact decoder"); ax.plot([], [], "o", mfc="white", mec=BLUE, ms=4.5, label="near-identical decoder")
     ax.legend(loc="lower right", fontsize=6.0, handletextpad=0.2, borderaxespad=0.1, bbox_to_anchor=(1.0, 0.0))
-    ax.set_title("c  Only the exact decoder", pad=4)
+    ax.set_title("c  Exact vs near-identical decoder", pad=4)
 
 
 def main():
@@ -138,7 +139,7 @@ def main():
     ax_b = fig.add_axes([0.06, 0.07, 0.33, 0.30]); panel_b(fig, ax_b)
     ax_c = fig.add_axes([0.47, 0.07, 0.52, 0.30]); panel_c(fig, ax_c)
     fig.savefig("figures/overview.pdf", bbox_inches=None); fig.savefig("figures/overview.png", dpi=220, bbox_inches=None)
-    print("wrote paper/figures/overview.pdf")
+    print("wrote figures/overview.pdf")
 
 
 if __name__ == "__main__":
