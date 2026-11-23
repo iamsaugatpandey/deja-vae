@@ -1,6 +1,6 @@
 # Déjà VAE: When Do Autoencoder Traces Reveal Generated Images?
 
-Code, per-image scores and benchmark-matching lists for the paper of the same title (under review at TMLR).
+Code, per-image scores and benchmark-matching lists for the paper of the same title (Saugat Pandey, arXiv preprint, 2026).
 
 A latent diffusion model's output has already passed through the model's autoencoder, so encoding and decoding it again
 changes it very little. This repository measures when that "déjà vu" reveals a generated image: where it is visible inside a
