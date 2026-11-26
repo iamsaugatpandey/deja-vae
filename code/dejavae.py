@@ -36,6 +36,9 @@ SETS = {   # name -> (manifest, folder holding the comparison methods' scores, t
     "sb_raw": ("runs/sb/manifest.csv", "runs/sb_raw", None),       # review: Synthbuster without the JPEG q95 re-save
     "eg": ("runs/eg/manifest.csv", "runs/eg", 95),                 # revision: EvalGEN + RAISE reals downscaled to 1024
     "eg_crop": ("runs/eg_crop/manifest.csv", "runs/eg_crop", 95),  # revision: EvalGEN + RAISE reals cropped to 1024
+    "e5": ("runs/e5/manifest.csv", "runs/e5", 95),                 # revision E5: VISION phone photos (real only)
+    "gi_c": ("runs/gi_c/manifest.csv", "runs/gi_c", 95),           # revision: GenImage subset, processing-only control
+    "gi_m": ("runs/gi_m/manifest.csv", "runs/gi_m", 95),           # revision: GenImage subset, size-matched
 }
 N_TRAIN = int(os.environ.get("DV_NTRAIN", 5000))
 LIMIT = int(os.environ.get("DV_LIMIT", 0))   # smoke test: keep ~LIMIT test rows per (split, label, source)

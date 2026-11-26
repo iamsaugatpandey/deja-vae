@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 
 SHORT = {"SimLBR (released)": "SimLBR", "Deja VAE-I": "Déjà VAE-I", "AlignedForensics": "AlignedForensics"}
 PANELS = [  # (benchmark, versions, x labels, title, accents {detector: colour})
-    ("GenImage", ["genimage_orig", "genimage_q95"], ["as\ndistributed", "JPEG re-save\n(format cue gone)"],
-     "a  GenImage: format cue", {"NPR": ORANGE}),
+    ("GenImage", ["genimage_orig", "genimage_q95", "gi_c", "gi_m"], ["as\ndistrib.", "JPEG\nre-save", "resize +\nreal's JPEG", "size-\nmatched"],
+     "a  GenImage: format and size cues", {"NPR": ORANGE}),
     ("Chameleon", ["cham", "cham_c", "cham_m"], ["as\ndistributed", "resize +\nJPEG", "size-\nmatched"],
      "b  Chameleon: processing vs width", {"B-Free": ORANGE, "SimLBR (released)": BLUE}),
     ("Synthbuster", ["sb_q95", "sb_crop_q95"], ["reals\ndownscaled", "reals\ncropped"],

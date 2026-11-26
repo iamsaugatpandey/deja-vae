@@ -12,10 +12,10 @@ import anchor_pilot as ap
 from e1_score import SETS, ROOT
 from dv_bank_full import auroc
 
-FAMILIES = [("GenImage", ["genimage_orig", "genimage_q95"]), ("Chameleon", ["cham", "cham_c", "cham_m"]),
+FAMILIES = [("GenImage", ["genimage_orig", "genimage_q95", "gi_c", "gi_m"]), ("Chameleon", ["cham", "cham_c", "cham_m"]),
             ("Synthbuster", ["sb_raw", "sb_q95", "sb_crop_q95"]), ("EvalGEN", ["eg_q95", "eg_crop_q95"])]
 OURS_SET = {"genimage_q95": "genimage", "cham": "cham", "cham_c": "cham_c", "cham_m": "cham_m", "sb_q95": "sb", "sb_crop_q95": "sb_crop",
-            "eg_q95": "eg", "eg_crop_q95": "eg_crop"}
+            "eg_q95": "eg", "eg_crop_q95": "eg_crop", "gi_c": "gi_c", "gi_m": "gi_m"}
 NAMES = {"bfree": "B-Free", "dda": "DDA", "npr": "NPR", "alignedforensics": "AlignedForensics", "spai": "SPAI", "aide": "AIDE",
          "simlbr": "SimLBR (released)", "dvI": "Deja VAE-I", "dvI_final": "Deja VAE-I (final layer)"}
 

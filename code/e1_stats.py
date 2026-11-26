@@ -18,7 +18,9 @@ from e1_score import SETS, ROOT
 from e1_report import FAMILIES, NAMES, ours
 
 B, EPS = 1000, 0.05
-CHANGES = {"GenImage": [("genimage_orig", "genimage_q95", "format cue removed (JPEG q95 re-save)")],
+CHANGES = {"GenImage": [("genimage_orig", "genimage_q95", "format cue removed (JPEG q95 re-save)"),
+                        ("genimage_q95", "gi_c", "one resize + JPEG with a real's tables (processing-only control)"),
+                        ("gi_c", "gi_m", "size cue removed (size-matched vs control)")],
            "Chameleon": [("cham", "cham_c", "one resize + JPEG q75 (processing-only control)"),
                          ("cham_c", "cham_m", "width shortcut removed (size-matched vs control)")],
            "Synthbuster": [("sb_raw", "sb_q95", "q95 re-save"), ("sb_q95", "sb_crop_q95", "reals cropped instead of downscaled")],
