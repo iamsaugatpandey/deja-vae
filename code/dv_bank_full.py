@@ -29,7 +29,7 @@ OUT = Path("runs/dv/bank_full"); OUT.mkdir(parents=True, exist_ok=True)
 BANK = {"sd1orig": "stable-diffusion-v1-5/stable-diffusion-v1-5:vae", "ftmse": "stabilityai/sd-vae-ft-mse",
         "kd21": "kandinsky-community/kandinsky-2-1:movq", "sdxl": "stabilityai/sdxl-vae", "flux": "ostris/Flex.1-alpha:vae",
         "vq": "kandinsky-community/kandinsky-2-2-decoder:movq", "dcae": "mit-han-lab/dc-ae-f32c32-in-1.0-diffusers"}
-LAYERS = [10, 12, 14, 16, 18]
+LAYERS = [int(x) for x in os.environ.get("BANK_LAYERS", "10,12,14,16,18").split(",")]   # E4 re-run: BANK_LAYERS=8,10,12,14,16,18
 N_CR, N_CF, N_GR, N_GF = 300, 300, 300, 200
 
 

@@ -6,8 +6,12 @@ Deja VAE-I: native 256 centre crop, JPEG q95, layers 8-18 (runs/dv2) or final la
 Thresholds are the paper's (5% FPR on the calibration reals). Reports the share of copies flagged as generated, and the
 share of the same originals flagged (control, should be near 5%). Mean over 3 seeds (SimLBR released: one head).
     anchor/bin/python review_copies.py   -> runs/review_copies.txt
+E4 (revision): the copy autoencoder is an argument, so the test can be repeated with SD1's ORIGINAL decoder, the decoder
+of the SD 1.4 images the probes were trained on (predictions: paper/deja-vae/predictions/E4_zhou_predictions.md).
+    anchor/bin/python review_copies.py --ae sd1     -> runs/review_copies_sd1.txt, runs/review_copies_sd1_flags.npz
+    anchor/bin/python review_copies.py --ae ftmse   -> runs/review_copies_ftmse.txt (re-run, adds the SD1-copy detector)
 """
-import os, sys
+import argparse, os, sys
 os.environ["DV_FEAT"] = "mid"; os.environ["DV_WORK"] = "runs/dv2"
 from pathlib import Path
 import numpy as np
@@ -34,8 +38,12 @@ def vcrop(im):
     return im.crop((l, t, l + cw, t + ch))
 
 
+AES = {"ftmse": "stabilityai/sd-vae-ft-mse", "sd1": "stable-diffusion-v1-5/stable-diffusion-v1-5:vae"}
+
+
 def main():
     import torch
+    a = argparse.ArgumentParser(); a.add_argument("--ae", choices=list(AES), default=None); a = a.parse_args()
     from PIL import Image
     from huggingface_hub import hf_hub_download
     from safetensors.torch import load_file
@@ -49,7 +57,8 @@ def main():
             pick.append(i)
         if len(pick) == 1000:
             break
-    enc = ap.Encoders(ap.pick_device(), norm="simlbr", vae=dv.AE)
+    enc = ap.Encoders(ap.pick_device(), norm="simlbr", vae=AES[a.ae] if a.ae else dv.AE)
+    tag = f"_{a.ae}" if a.ae else ""; flags = {}
     feats = {k: [] for k in ("sq_orig", "sq_copy", "mid_orig", "mid_copy", "fin_orig", "fin_copy")}
     for s in range(0, len(pick), 8):
         ims = [crop8(Image.open(rows[i]["path"]).convert("RGB")) for i in pick[s:s + 8]]
@@ -66,14 +75,17 @@ def main():
         if s % 80 == 0:
             print(f"{s}/{len(pick)}", flush=True)
     F = {k: np.concatenate(v).astype(np.float32) for k, v in feats.items()}
-    L = [__doc__.strip().splitlines()[0], f"n = {len(pick)} test reals; share flagged at the paper's 5% threshold (%)", ""]
+    L = [__doc__.strip().splitlines()[0], f"copy autoencoder: {AES[a.ae] if a.ae else dv.AE}",
+         f"n = {len(pick)} test reals; share flagged at the paper's 5% threshold (%)", ""]
     def report(name, heads, ref_scores, key):
-        o, c = [], []
+        o, c, fo, fc = [], [], [], []
         for h, ref in zip(heads, ref_scores):
             tau = ap.conformal_tau(ref[cal], 0.05)
             with torch.no_grad():
-                o.append((h(torch.from_numpy(F[f"{key}_orig"])).squeeze(1).numpy() > tau).mean() * 100)
-                c.append((h(torch.from_numpy(F[f"{key}_copy"])).squeeze(1).numpy() > tau).mean() * 100)
+                fo.append(h(torch.from_numpy(F[f"{key}_orig"])).squeeze(1).numpy() > tau)
+                fc.append(h(torch.from_numpy(F[f"{key}_copy"])).squeeze(1).numpy() > tau)
+            o.append(fo[-1].mean() * 100); c.append(fc[-1].mean() * 100)
+        flags[f"{name}|orig"] = np.array(fo); flags[f"{name}|copy"] = np.array(fc)   # seeds x images
         L.append(f"{name:42s} originals {np.mean(o):5.1f}   copies {np.mean(c):5.1f}"); print(L[-1], flush=True)
     ld = lambda p: ap.head_from_state(torch.load(p, map_location="cpu"))
     sc = lambda m: [np.load(f"runs/p4s/scores_{m}_seed{s}.npy") for s in (0, 1, 2)]
@@ -84,10 +96,14 @@ def main():
     report("Reconstruction probe (copies, final layer)", [ld(f"runs/p4s/head_recon_seed{s}.pt") for s in (0, 1, 2)], sc("recon"), "sq")
     S = dv.scores_for("genimage", rows, idx)
     report("Deja VAE-I (copies, layers 8-18)", [ld(f"runs/dv2/head_dv-single_seed{s}.pt") for s in (0, 1, 2)], [S["dv-single"][s][0] for s in (0, 1, 2)], "mid")
+    dv.W = Path("runs/dv4")                      # E8 detector: trained on copies from SD1's original decoder, layers 8-18
+    S4 = dv.scores_for("genimage", rows, idx)
+    report("Deja VAE-I, SD1-decoder copies (layers 8-18)", [ld(f"runs/dv4/head_dv-single_seed{s}.pt") for s in (0, 1, 2)], [S4["dv-single"][s][0] for s in (0, 1, 2)], "mid")
     dv.W, dv.FEAT = Path("runs/dv"), "cls24"
     S1 = dv.scores_for("genimage", rows, idx)
     report("Deja VAE-I (copies, final layer)", [ld(f"runs/dv/head_dv-single_seed{s}.pt") for s in (0, 1, 2)], [S1["dv-single"][s][0] for s in (0, 1, 2)], "fin")
-    Path("runs/review_copies.txt").write_text("\n".join(L) + "\n")
+    Path(f"runs/review_copies{tag}.txt").write_text("\n".join(L) + "\n")
+    np.savez(f"runs/review_copies{tag}_flags.npz", pick=np.array(pick), **flags)
 
 
 if __name__ == "__main__":

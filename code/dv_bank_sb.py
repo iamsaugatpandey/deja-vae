@@ -20,7 +20,7 @@ import anchor_pilot as ap
 from dejavae import to256
 from dv_bank_full import view32, auroc, LAYERS
 
-OUT = Path("runs/sb/bank"); OUT.mkdir(parents=True, exist_ok=True)
+OUT = Path(os.environ.get("SB_BANK_OUT", "runs/sb/bank")); OUT.mkdir(parents=True, exist_ok=True)
 N = 200
 BANK = {"sd1orig": "stable-diffusion-v1-5/stable-diffusion-v1-5:vae", "ftmse": "stabilityai/sd-vae-ft-mse",
         "sdxl": "stabilityai/sdxl-vae", "kd21": "kandinsky-community/kandinsky-2-1:movq", "flux": "ostris/Flex.1-alpha:vae",

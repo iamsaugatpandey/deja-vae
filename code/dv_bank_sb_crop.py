@@ -15,7 +15,7 @@ from dejavae import to256
 import dv_bank_sb as B
 from dv_bank_full import view32, auroc, LAYERS
 
-SRC = Path("runs/sb/bank"); OUT = Path("runs/sb/bank_crop"); OUT.mkdir(parents=True, exist_ok=True)
+SRC = Path(os.environ.get("SB_BANK_OUT", "runs/sb/bank")); OUT = Path(os.environ.get("SB_BANK_CROP_OUT", "runs/sb/bank_crop")); OUT.mkdir(parents=True, exist_ok=True)
 CROP = Path.home() / "anchor_data" / "synthbuster_real_cropped"
 GENS = list(B.OWN)
 
