@@ -58,7 +58,7 @@ def main():
         if len(pick) == 1000:
             break
     enc = ap.Encoders(ap.pick_device(), norm="simlbr", vae=AES[a.ae] if a.ae else dv.AE)
-    tag = f"_{a.ae}" if a.ae else ""; flags = {}
+    out_tag = f"_{a.ae}" if a.ae else ""; flags = {}   # not "tag": the feature loop below reuses that name
     feats = {k: [] for k in ("sq_orig", "sq_copy", "mid_orig", "mid_copy", "fin_orig", "fin_copy")}
     for s in range(0, len(pick), 8):
         ims = [crop8(Image.open(rows[i]["path"]).convert("RGB")) for i in pick[s:s + 8]]
@@ -102,8 +102,8 @@ def main():
     dv.W, dv.FEAT = Path("runs/dv"), "cls24"
     S1 = dv.scores_for("genimage", rows, idx)
     report("Deja VAE-I (copies, final layer)", [ld(f"runs/dv/head_dv-single_seed{s}.pt") for s in (0, 1, 2)], [S1["dv-single"][s][0] for s in (0, 1, 2)], "fin")
-    Path(f"runs/review_copies{tag}.txt").write_text("\n".join(L) + "\n")
-    np.savez(f"runs/review_copies{tag}_flags.npz", pick=np.array(pick), **flags)
+    Path(f"runs/review_copies{out_tag}.txt").write_text("\n".join(L) + "\n")
+    np.savez(f"runs/review_copies{out_tag}_flags.npz", pick=np.array(pick), **flags)
 
 
 if __name__ == "__main__":
