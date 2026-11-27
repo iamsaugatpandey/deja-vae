@@ -1,6 +1,6 @@
 # Déjà VAE: When Do Autoencoder Traces Reveal Generated Images?
 
-Code, per-image scores and benchmark-matching lists for the paper of the same title (Saugat Pandey, arXiv preprint, 2026).
+Code, per-image scores and benchmark-matching lists for the paper of the same title (Saugat Pandey, [arXiv:2611.31036](https://arxiv.org/abs/2611.31036), 2026).
 
 A latent diffusion model's output has already passed through the model's autoencoder, so encoding and decoding it again
 changes it very little. This repository measures when that "déjà vu" reveals a generated image: where it is visible inside a
@@ -147,3 +147,17 @@ VISION file adds `device` and `scene` (the version-independent scene id used for
 Code: MIT (see `LICENSE`). The Figure 1 crops come from Synthbuster (Bammey, 2024; CC BY-NC-SA 4.0) and RAISE-1k
 (Dang-Nguyen et al., 2015) and remain under those terms. The scores and lists are derived from GenImage, Chameleon, Synthbuster (CC BY-NC-SA 4.0) and RAISE-1k;
 use them under those datasets' terms.
+
+## Citation
+
+```bibtex
+@misc{pandey2026dejavaeautoencodertraces,
+  title         = {D{\'e}j{\`a} {VAE}: When Do Autoencoder Traces Reveal Generated Images?},
+  author        = {Saugat Pandey},
+  year          = {2026},
+  eprint        = {2611.31036},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2611.31036}
+}
+```
