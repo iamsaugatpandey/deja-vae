@@ -22,7 +22,7 @@ from style import *          # noqa: F401,F403
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 from PIL import Image
 
-AS = Path("figures/fig1_assets")
+AS = Path("paper/figures/fig1_assets")
 LAYERS = list(range(2, 25, 2))
 
 
@@ -138,8 +138,8 @@ def main():
     panel_a(fig)
     ax_b = fig.add_axes([0.06, 0.07, 0.33, 0.30]); panel_b(fig, ax_b)
     ax_c = fig.add_axes([0.47, 0.07, 0.52, 0.30]); panel_c(fig, ax_c)
-    fig.savefig("figures/overview.pdf", bbox_inches=None); fig.savefig("figures/overview.png", dpi=220, bbox_inches=None)
-    print("wrote figures/overview.pdf")
+    fig.savefig("paper/figures/overview.pdf", bbox_inches=None); fig.savefig("paper/figures/overview.png", dpi=220, bbox_inches=None)
+    print("wrote paper/figures/overview.pdf")
 
 
 if __name__ == "__main__":

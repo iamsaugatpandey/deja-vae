@@ -120,6 +120,28 @@ Internal names in the code: `dv-single` = Déjà VAE-I, `dv` = Déjà VAE-P, `dv
 retrained, `simlbr_official` = SimLBR released, `sup` = supervised probe, `recon` = reconstruction probe. The files
 `anchor_pilot.py` and `dv_bank.py` also contain code from an earlier pilot that the paper does not use.
 
+## Revision (2026): released detectors, matched benchmarks and phone photographs
+
+The revised paper adds a re-evaluation of five released detectors (B-Free, DDA, NPR, AlignedForensics, SPAI) on the same
+images of every benchmark version, a metadata-only audit, size-matched GenImage, EvalGEN with matched real photographs,
+and a false-alarm test on real phone photographs (VISION). Released detectors are run with their authors' code and weights,
+outside this repository; `e1_score.py` lists the versions and the two memory-driven deviations.
+
+| What | Code | Pipeline | Output in `data/` |
+|---|---|---|---|
+| Metadata audit (no pixels) | `benchmark_audit.py`, `figures/fig_audit.py` | | `results/metadata_audit.txt` |
+| Size-matched GenImage and its processing-only control | `gi_match.py` (`make`) | `revision_gi.sh` | `matching/genimage_size_matched.csv` |
+| EvalGEN with RAISE reals (downscaled, cropped to 1024 px) | `evalgen_prep.py` | `revision_eg.sh` | `matching/evalgen_reals.csv` |
+| Released detectors and our methods on every version | `e1_score.py`, `e1_report.py`, `e1_stats.py`, `figures/fig_e1_slope.py` | `revision_eg.sh`, `revision_gi.sh` | `scores/e1_<version>.csv.gz`, `results/e1_*.txt`, `results/stats_*.csv` |
+| Pre-registered test with SD1-decoder copies | `review_copies.py --ae sd1`, `zhou_compare.py` | `revision_e4.sh`, `revision_e4b.sh` | `results/zhou_compare.txt` |
+| False alarms on VISION phone photographs | `e5_prep.py`, `e5_report.py`, `figures/fig_e5.py` | `vision_download.sh`, `revision_e5_vision.sh` | `scores/e5_vision.csv.gz`, `results/e5_vision_*` |
+
+`e1_export.py data` regenerates the revision's score files. In `scores/e1_*.csv.gz` and `scores/e5_vision.csv.gz` the
+released detectors' columns (`bfree`, `dda`, `npr`, `alignedforensics`, `spai`) are the logits their code outputs; the
+VISION file adds `device` and `scene` (the version-independent scene id used for paired comparisons). VISION
+(Shullani et al., 2017; CC BY-SA 4.0) is downloaded from its authors' server with `vision_download.sh` and the list in
+`data/matching/vision_subset.txt`. EvalGEN is distributed by the DDA authors (Chen et al., 2025).
+
 ## Licence
 
 Code: MIT (see `LICENSE`). The Figure 1 crops come from Synthbuster (Bammey, 2024; CC BY-NC-SA 4.0) and RAISE-1k

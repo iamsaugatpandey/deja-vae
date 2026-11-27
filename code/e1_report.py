@@ -28,7 +28,10 @@ def ours(name, I):
     st = OURS_SET[name]; rows, idx = dv.rows_of(st); ref = Path(dv.SETS[st][1]); out = {}
     if (ref / "scores_simlbr_official_seed0.npy").exists():
         out["simlbr"] = [np.load(ref / "scores_simlbr_official_seed0.npy")[I]]
-    S = dv.scores_for(st, rows, idx)
+    try:
+        S = dv.scores_for(st, rows, idx)
+    except FileNotFoundError:                     # this version's pairs are not computed yet
+        S = {}
     if "dv-single" in S:
         out["dvI"] = [S["dv-single"][s][0][I] for s in (0, 1, 2)]
     return out

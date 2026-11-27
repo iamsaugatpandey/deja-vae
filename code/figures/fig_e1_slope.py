@@ -2,26 +2,26 @@
 One panel per benchmark; one line per detector; points = TPR at 5% FPR (mean over generators), vertical bars = 95%
 bootstrap intervals (e1_stats.py: Synthbuster resampled by RAISE photograph, others by image; B = 1,000).
 Grey context, two accents per panel where the panel has a story; direct labels instead of a legend.
-    anchor/bin/python paper/figures/fig_e1_slope.py        (reads runs/e1/stats_tpr.csv)  -> e1_slope.pdf/.png
+    anchor/bin/python figures/fig_e1_slope.py        (reads runs/e1/stats_tpr.csv)  -> e1_slope.pdf/.png
 """
 import csv, sys
 from pathlib import Path
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[2]; sys.path.insert(0, str(Path(__file__).parent))
+ROOT = Path(__file__).resolve().parents[1]; sys.path.insert(0, str(Path(__file__).parent))
 from style import *          # noqa: F401,F403
 import matplotlib.pyplot as plt
 
 SHORT = {"SimLBR (released)": "SimLBR", "Deja VAE-I": "Déjà VAE-I", "AlignedForensics": "AlignedForensics"}
 PANELS = [  # (benchmark, versions, x labels, title, accents {detector: colour})
-    ("GenImage", ["genimage_orig", "genimage_q95", "gi_c", "gi_m"], ["as\ndistrib.", "JPEG\nre-save", "resize +\nreal's JPEG", "size-\nmatched"],
-     "a  GenImage: format and size cues", {"NPR": ORANGE}),
+    ("GenImage", ["genimage_orig", "genimage_q95", "gi_c", "gi_m"], ["as\ndistrib.", "JPEG\nq95", "proc.\ncontrol", "size-\nmatched"],
+     "a  GenImage\nformat and size cues", {"NPR": ORANGE, "AlignedForensics": BLUE}),
     ("Chameleon", ["cham", "cham_c", "cham_m"], ["as\ndistributed", "resize +\nJPEG", "size-\nmatched"],
-     "b  Chameleon: processing vs width", {"B-Free": ORANGE, "SimLBR (released)": BLUE}),
-    ("Synthbuster", ["sb_q95", "sb_crop_q95"], ["reals\ndownscaled", "reals\ncropped"],
-     "c  Synthbuster: how reals are matched", {"Deja VAE-I": BLUE, "SimLBR (released)": ORANGE}),
-    ("EvalGEN", ["eg_q95", "eg_crop_q95"], ["reals\ndownscaled", "reals\ncropped"],
-     "d  EvalGEN (2024–25 generators)", {}),
+     "b  Chameleon\nprocessing vs width", {"B-Free": ORANGE, "SimLBR (released)": BLUE}),
+    ("Synthbuster", ["sb_q95", "sb_crop_q95"], ["reals\ndown-\nscaled", "reals\ncropped"],
+     "c  Synthbuster\nhow reals are matched", {"Deja VAE-I": BLUE, "SimLBR (released)": ORANGE}),
+    ("EvalGEN", ["eg_q95", "eg_crop_q95"], ["reals\ndown-\nscaled", "reals\ncropped"],
+     "d  EvalGEN (2024–25)\nhow reals are matched", {"Deja VAE-I": BLUE, "AlignedForensics": ORANGE}),
 ]
 
 
@@ -59,14 +59,14 @@ def main():
             for x, (p, lo, hi) in zip(xs, m):
                 ax.plot([x, x], [lo, hi], color=c, lw=0.7, alpha=0.9, zorder=2)
                 ax.plot([x], [p], "o", ms=3.2 if d in acc else 2.4, color=c, mec="white", mew=0.5, zorder=4)
-            ends.append((d, m[-1][0], c, d in acc))
+            ends.append((d, m[-1][0], c, d in acc, xs[-1]))
         ly = repel([e[1] for e in ends], 6.2)
-        for (d, y, c, a), yy in zip(ends, ly):
-            ax.annotate(SHORT.get(d, d), (len(vers) - 1, y), xytext=(len(vers) - 1 + 0.12, yy), textcoords="data",
+        for (d, y, c, a, xe), yy in zip(ends, ly):
+            ax.annotate(SHORT.get(d, d), (xe, y), xytext=(xe + 0.12, yy), textcoords="data",
                         fontsize=6.3, color=INK if a else INK2, fontweight="bold" if a else "normal", va="center", ha="left",
                         annotation_clip=False)
         ax.set_xticks(range(len(vers))); ax.set_xticklabels(xl, fontsize=6.3)
-        ax.set_xlim(-0.25, len(vers) - 1 + 0.1); ax.set_ylim(0, 100); ax.set_title(title, fontsize=7.5)
+        ax.set_xlim(-0.25, len(vers) - 1 + 0.1); ax.set_ylim(0, 100); ax.set_title(title, fontsize=7.5, loc="left")
         ax.tick_params(axis="x", length=0)
         for yv in (25, 50, 75):
             ax.axhline(yv, color=GRID, lw=0.5, zorder=0)

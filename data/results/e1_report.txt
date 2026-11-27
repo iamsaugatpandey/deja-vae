@@ -1,0 +1,102 @@
+E1 report: released detectors and the paper's own methods on the same subset rows, under original and matched versions.
+
+=== GenImage
+  [genimage_orig]  (re-save: none)
+    1. DDA                        TPR@5  88.6  worst  61.6  AUROC 0.979  FPR(test reals)  4.2
+    2. B-Free                     TPR@5  87.2  worst  64.4  AUROC 0.972  FPR(test reals)  4.8
+    3. SPAI                       TPR@5  74.5  worst  16.0  AUROC 0.916  FPR(test reals)  4.8
+    4. AlignedForensics           TPR@5  64.0  worst   4.4  AUROC 0.902  FPR(test reals)  3.8
+    5. NPR                        TPR@5  56.7  worst  34.4  AUROC 0.906  FPR(test reals)  4.6
+  [genimage_q95]  (re-save: 95)
+    1. DDA                        TPR@5  87.8  worst  62.0  AUROC 0.978  FPR(test reals)  5.1
+    2. B-Free                     TPR@5  87.6  worst  62.0  AUROC 0.972  FPR(test reals)  5.6
+    3. Deja VAE-I                 TPR@5  85.8  worst  59.5  AUROC 0.973  FPR(test reals)  3.9
+    4. SimLBR (released)          TPR@5  83.5  worst  42.8  AUROC 0.959  FPR(test reals)  3.9
+    5. SPAI                       TPR@5  69.8  worst  17.2  AUROC 0.900  FPR(test reals)  6.1
+    6. AlignedForensics           TPR@5  64.5  worst   5.6  AUROC 0.920  FPR(test reals)  3.9
+    7. NPR                        TPR@5  12.3  worst   0.0  AUROC 0.482  FPR(test reals)  4.8
+  [gi_c]  (re-save: 95)
+    1. B-Free                     TPR@5  85.8  worst  56.8  AUROC 0.953  FPR(test reals)  5.6
+    2. DDA                        TPR@5  84.5  worst  60.8  AUROC 0.966  FPR(test reals)  5.1
+    3. SimLBR (released)          TPR@5  82.8  worst  44.0  AUROC 0.957  FPR(test reals)  3.9
+    4. AlignedForensics           TPR@5  82.7  worst  36.4  AUROC 0.978  FPR(test reals)  3.9
+    5. Deja VAE-I                 TPR@5  77.2  worst  38.7  AUROC 0.959  FPR(test reals)  3.9
+    6. SPAI                       TPR@5  73.3  worst  41.2  AUROC 0.942  FPR(test reals)  6.1
+    7. NPR                        TPR@5   3.3  worst   1.2  AUROC 0.527  FPR(test reals)  4.8
+  [gi_m]  (re-save: 95)
+    1. B-Free                     TPR@5  86.6  worst  61.2  AUROC 0.957  FPR(test reals)  5.6
+    2. SimLBR (released)          TPR@5  83.9  worst  52.0  AUROC 0.962  FPR(test reals)  3.9
+    3. DDA                        TPR@5  83.8  worst  59.6  AUROC 0.967  FPR(test reals)  5.1
+    4. AlignedForensics           TPR@5  82.0  worst  36.8  AUROC 0.976  FPR(test reals)  3.9
+    5. Deja VAE-I                 TPR@5  77.1  worst  41.3  AUROC 0.959  FPR(test reals)  3.9
+    6. SPAI                       TPR@5  75.4  worst  45.6  AUROC 0.945  FPR(test reals)  6.1
+    7. NPR                        TPR@5   1.8  worst   0.4  AUROC 0.447  FPR(test reals)  4.8
+
+=== Chameleon
+  [cham]  (re-save: none)
+    1. SimLBR (released)          TPR@5  84.5  worst  84.5  AUROC 0.957  FPR(test reals)  5.6
+    2. DDA                        TPR@5  68.3  worst  68.3  AUROC 0.924  FPR(test reals)  4.0
+    3. B-Free                     TPR@5  55.4  worst  55.4  AUROC 0.838  FPR(test reals)  4.7
+    4. Deja VAE-I                 TPR@5  37.3  worst  37.3  AUROC 0.764  FPR(test reals)  6.5
+    5. AlignedForensics           TPR@5  33.8  worst  33.8  AUROC 0.813  FPR(test reals)  3.7
+    6. NPR                        TPR@5  12.2  worst  12.2  AUROC 0.508  FPR(test reals)  4.7
+    7. SPAI                       TPR@5  10.8  worst  10.8  AUROC 0.652  FPR(test reals)  4.3
+  [cham_c]  (re-save: none)
+    1. SimLBR (released)          TPR@5  78.4  worst  78.4  AUROC 0.939  FPR(test reals)  5.6
+    2. DDA                        TPR@5  55.3  worst  55.3  AUROC 0.882  FPR(test reals)  4.0
+    3. B-Free                     TPR@5  34.3  worst  34.3  AUROC 0.721  FPR(test reals)  4.7
+    4. Deja VAE-I                 TPR@5  27.9  worst  27.9  AUROC 0.711  FPR(test reals)  6.5
+    5. AlignedForensics           TPR@5  13.3  worst  13.3  AUROC 0.699  FPR(test reals)  3.7
+    6. SPAI                       TPR@5   7.3  worst   7.3  AUROC 0.650  FPR(test reals)  4.3
+    7. NPR                        TPR@5   2.4  worst   2.4  AUROC 0.406  FPR(test reals)  4.7
+  [cham_m]  (re-save: none)
+    1. SimLBR (released)          TPR@5  75.9  worst  75.9  AUROC 0.929  FPR(test reals)  5.6
+    2. DDA                        TPR@5  56.6  worst  56.6  AUROC 0.890  FPR(test reals)  4.0
+    3. B-Free                     TPR@5  38.5  worst  38.5  AUROC 0.754  FPR(test reals)  4.7
+    4. Deja VAE-I                 TPR@5  27.7  worst  27.7  AUROC 0.710  FPR(test reals)  6.5
+    5. AlignedForensics           TPR@5  12.7  worst  12.7  AUROC 0.674  FPR(test reals)  3.7
+    6. SPAI                       TPR@5   6.5  worst   6.5  AUROC 0.603  FPR(test reals)  4.3
+    7. NPR                        TPR@5   1.3  worst   1.3  AUROC 0.324  FPR(test reals)  4.7
+
+=== Synthbuster
+  [sb_raw]  (re-save: none)
+    1. B-Free                     TPR@5  98.7  worst  93.0  AUROC 0.997  FPR(test reals)  4.1
+    2. DDA                        TPR@5  86.4  worst  45.5  AUROC 0.966  FPR(test reals)  5.6
+    3. SPAI                       TPR@5  75.6  worst  51.0  AUROC 0.956  FPR(test reals)  4.6
+    4. AlignedForensics           TPR@5  58.4  worst   0.0  AUROC 0.777  FPR(test reals)  4.9
+    5. NPR                        TPR@5   7.6  worst   0.0  AUROC 0.547  FPR(test reals)  3.0
+  [sb_q95]  (re-save: 95)
+    1. B-Free                     TPR@5  98.8  worst  93.0  AUROC 0.997  FPR(test reals)  4.7
+    2. DDA                        TPR@5  88.4  worst  61.5  AUROC 0.973  FPR(test reals)  5.5
+    3. Deja VAE-I                 TPR@5  85.5  worst  42.8  AUROC 0.958  FPR(test reals)  6.2
+    4. SimLBR (released)          TPR@5  81.9  worst  43.5  AUROC 0.944  FPR(test reals)  5.7
+    5. SPAI                       TPR@5  76.8  worst  60.0  AUROC 0.937  FPR(test reals)  6.5
+    6. AlignedForensics           TPR@5  57.6  worst   0.0  AUROC 0.785  FPR(test reals)  4.4
+    7. NPR                        TPR@5   9.9  worst   0.5  AUROC 0.556  FPR(test reals)  4.5
+  [sb_crop_q95]  (re-save: 95)
+    1. B-Free                     TPR@5  96.3  worst  81.5  AUROC 0.991  FPR(test reals)  4.3
+    2. DDA                        TPR@5  85.1  worst  52.0  AUROC 0.964  FPR(test reals)  3.6
+    3. SimLBR (released)          TPR@5  78.0  worst  32.0  AUROC 0.926  FPR(test reals)  4.7
+    4. Deja VAE-I                 TPR@5  69.2  worst  18.8  AUROC 0.888  FPR(test reals)  7.9
+    5. SPAI                       TPR@5  61.9  worst  32.0  AUROC 0.924  FPR(test reals)  3.9
+    6. AlignedForensics           TPR@5  56.1  worst   0.0  AUROC 0.743  FPR(test reals)  3.7
+    7. NPR                        TPR@5   7.1  worst   0.0  AUROC 0.509  FPR(test reals)  6.3
+
+=== EvalGEN
+  [eg_q95]  (re-save: 95)
+    1. B-Free                     TPR@5  95.2  worst  76.7  AUROC 0.986  FPR(test reals)  4.0
+    2. AlignedForensics           TPR@5  93.9  worst  76.0  AUROC 0.986  FPR(test reals)  6.6
+    3. DDA                        TPR@5  90.1  worst  69.3  AUROC 0.976  FPR(test reals)  6.2
+    4. SimLBR (released)          TPR@5  83.7  worst  60.0  AUROC 0.958  FPR(test reals)  5.0
+    5. Deja VAE-I                 TPR@5  71.2  worst  23.2  AUROC 0.926  FPR(test reals)  5.9
+    6. SPAI                       TPR@5  64.7  worst  29.3  AUROC 0.901  FPR(test reals)  7.2
+    7. NPR                        TPR@5   2.3  worst   0.7  AUROC 0.214  FPR(test reals)  5.0
+  [eg_crop_q95]  (re-save: 95)
+    1. B-Free                     TPR@5  92.5  worst  64.0  AUROC 0.970  FPR(test reals)  4.2
+    2. DDA                        TPR@5  88.7  worst  66.0  AUROC 0.973  FPR(test reals)  4.6
+    3. AlignedForensics           TPR@5  85.1  worst  56.0  AUROC 0.973  FPR(test reals)  3.8
+    4. SimLBR (released)          TPR@5  83.1  worst  59.0  AUROC 0.946  FPR(test reals)  5.2
+    5. SPAI                       TPR@5  58.5  worst  24.3  AUROC 0.914  FPR(test reals)  3.2
+    6. Deja VAE-I                 TPR@5  43.1  worst   3.1  AUROC 0.798  FPR(test reals)  8.0
+    7. NPR                        TPR@5   1.1  worst   0.3  AUROC 0.203  FPR(test reals)  8.0
+

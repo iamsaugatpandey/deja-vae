@@ -41,7 +41,7 @@ def cmd_make(rd):
                 SW, SH = src.size; cw, ch = min(w, SW), min(h, SH)
                 l, t = (SW - cw) // 2, (SH - ch) // 2
                 dst = OUT_IMG / g / f"{i}.png"; dst.parent.mkdir(parents=True, exist_ok=True)
-                src.crop((l, t, l + cw, t + ch)).save(dst)
+                src.crop((l, t, l + cw, t + ch)).save(dst, icc_profile=None)
         if n % 50 == 0:
             print(f"{n}/{len(need)}", flush=True)
     with open(DST / "manifest.csv", "w", newline="") as fh:

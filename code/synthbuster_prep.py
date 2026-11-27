@@ -78,7 +78,7 @@ def cmd_make(rd):
                         real = im.convert("RGB")
                 with Image.open(SB / g / f"{i}.png") as f:
                     size = f.size
-                dst.parent.mkdir(parents=True, exist_ok=True); match(real, size).save(dst)
+                dst.parent.mkdir(parents=True, exist_ok=True); match(real, size).save(dst, icc_profile=None)
             rows.append(dict(path=str(dst), label=0, split="calib" if i in calib else "test", source=g))
     for g in GENS:
         for i in I:

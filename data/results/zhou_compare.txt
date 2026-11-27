@@ -1,0 +1,17 @@
+E4: Zhou blindness test, copies from SD1's ORIGINAL decoder vs copies from ft-MSE (paired, the same 1,000 GenImage
+n = 1000 images; share flagged (%), seed-averaged
+
+detector                                         orig(ft) orig(sd1)  ft-MSE    SD1   SD1 - ft-MSE [95% CI]
+SimLBR (released; trained on SD1.4 images)            5.3       5.3    24.9   24.1     -0.8 [-2.5, +1.0]
+SimLBR (retrained, 10k SD1.4)                         4.8       4.8    20.1   18.4     -1.8 [-3.2, -0.3]
+Supervised probe (SD1.4 images)                       4.3       4.3    15.2   14.9     -0.2 [-1.7, +1.2]
+Reconstruction probe (copies, final layer)            4.3       4.3    32.0   27.1     -4.9 [-6.8, -3.1]
+Deja VAE-I (copies, layers 8-18)                      4.6       4.6    97.6   94.6     -3.0 [-4.3, -1.8]
+Deja VAE-I, SD1-decoder copies (layers 8-18)          4.5       4.5    89.8   99.6     +9.8 [+8.2, +11.5]
+Deja VAE-I (copies, final layer)                      4.2       4.2    50.1   53.7     +3.6 [+1.4, +5.7]
+
+Pre-specified checks:
+  Z1 SD1.4-trained probes flag more SD1-decoder copies than ft-MSE copies (all three CIs above 0): FAILS
+  Z2 all three flag fewer than 50% of SD1-decoder copies: HOLDS  (24.1, 18.4, 14.9)
+  Z3 Deja VAE-I (ft-MSE copies, layers 8-18) flags at least 80% of SD1-decoder copies: HOLDS (94.6)
+  Z4 Deja VAE-I trained on SD1-decoder copies flags at least 90% of SD1-decoder copies and more of them than of ft-MSE copies: HOLDS (99.6 vs 89.8)
