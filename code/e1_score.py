@@ -30,6 +30,7 @@ SETS = {   # name: (manifest, subset index file, JPEG re-save quality or None)
     "sb_raw": ("runs/sb/manifest.csv", "runs/sb/aeroblade/idx.npy", None),
     "eg_q95": ("runs/eg/manifest.csv", "runs/eg/idx_all.npy", 95),            # EvalGEN (2024-25 generators) + matched RAISE reals
     "eg_crop_q95": ("runs/eg_crop/manifest.csv", "runs/eg_crop/idx_all.npy", 95),
+    "eg_raw_fake": ("runs/eg/manifest.csv", "runs/eg/idx_fake.npy", None),    # EvalGEN generated images as distributed (reproduction check)
     "e5": ("runs/e5/manifest.csv", "runs/e5/idx_all.npy", None),                # E5: VISION phone photos as shared (real only)
     "gi_c": ("runs/gi_c/manifest.csv", "runs/gi_c/idx_all.npy", 95),            # GenImage subset, processing-only control (gi_match.py)
     "gi_m": ("runs/gi_m/manifest.csv", "runs/gi_m/idx_all.npy", 95),            # GenImage subset, size-matched

@@ -1,0 +1,29 @@
+Reproduction checks: own rule (logit > 0) on our evaluation subsets vs published numbers
+
+set            detector             published   ours   diff
+sb_raw         dda                       90.1   89.7   -0.4
+sb_raw         alignedforensics          77.4   77.6   +0.2
+sb_raw         npr                       50.0   50.0   +0.0
+genimage_q95   dda                       91.7   90.7   -1.0
+genimage_q95   alignedforensics          79.0   76.4   -2.6
+genimage_q95   npr                       51.5   52.3   +0.8
+cham           dda                       82.4   82.9   +0.5
+cham           alignedforensics          71.0   63.3   -7.7
+cham           npr                       59.9   53.6   -6.3
+eg_raw_fake    dda                       97.2   96.5   -0.7
+eg_raw_fake    alignedforensics          68.0   55.1  -12.9
+eg_raw_fake    npr                        2.9   42.7  +39.8
+eg_raw_fake    npr_crop224                2.9    4.1   +1.2
+sb_raw         npr_crop224               50.0   37.2  -12.8
+
+SPAI AUROC x100 per Synthbuster generator (ours: RAISE reals only; published: mean over five real sources)
+  glide                  published  90.2  ours  93.5
+  stable-diffusion-1-3   published  99.6  ours  99.9
+  stable-diffusion-1-4   published  99.6  ours  99.9
+  dalle2                 published  91.1  ours  91.7
+  stable-diffusion-2     published  96.5  ours  95.6
+  stable-diffusion-xl    published  97.4  ours  97.1
+  midjourney-v5          published  94.5  ours  97.0
+  dalle3                 published  90.2  ours  90.9
+  firefly                published  96.0  ours  90.9
+  mean                   published  95.0  ours  95.2

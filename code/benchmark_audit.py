@@ -111,6 +111,12 @@ BENCH = {
 }
 
 
+RESAVE = "_after_q95_resave"          # suffix: the same rows, described after the pipelines' JPEG q95 re-save
+for _b in ("genimage_size_matched", "genimage_processing_control", "synthbuster_downscaled", "synthbuster_cropped",
+           "evalgen_downscaled", "evalgen_cropped"):
+    BENCH[_b + RESAVE] = BENCH[_b]
+
+
 def _open(path):
     """A file path, or '<parquet>#<row>' for images stored as bytes (Community Forensics). Returns (file object, n_bytes)."""
     import io
@@ -124,9 +130,16 @@ def _open(path):
 _open.cache = {}
 
 
-def describe(path):
+def describe(path, resave=None):
+    """File-metadata features. resave=q: describe the file as every scoring pipeline sees it, after an in-memory
+    re-save as baseline JPEG at quality q (no EXIF, no ICC profile), as in e1_score.load()."""
+    import io
     from PIL import Image
     src, nbytes = _open(path)
+    if resave:
+        with Image.open(src) as im0:
+            b = io.BytesIO(); im0.convert("RGB").save(b, format="JPEG", quality=int(resave)); nbytes = b.tell(); b.seek(0)
+        src = b
     with Image.open(src) as im:
         w, h = im.size; fmt = FMT.get(im.format, 9); mode = MODE.get(im.mode, 9)
         qt = getattr(im, "quantization", None); q0 = float(np.mean(qt[0])) if qt else -1.0
@@ -147,12 +160,13 @@ def features(name):
     f = OUT / f"features_{name}.npz"
     if f.exists():
         d = np.load(f, allow_pickle=False); return d["X"], d["y"], d["src"]
-    rows = BENCH[name]()
+    base, q = (name[:-len(RESAVE)], 95) if name.endswith(RESAVE) else (name, None)
+    rows = BENCH[base]()
     if not rows:                                  # data not downloaded yet
         return None
     X, y, src = [], [], []
     for k, (p, lab, s) in enumerate(rows):
-        X.append(describe(p)); y.append(lab); src.append(s)
+        X.append(describe(p, resave=q)); y.append(lab); src.append(s)
         if k % 5000 == 0:
             print(f"  {name}: {k}/{len(rows)}", flush=True)
     X, y, src = np.array(X, float), np.array(y), np.array(src)

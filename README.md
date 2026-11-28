@@ -129,7 +129,8 @@ outside this repository; `e1_score.py` lists the versions and the two memory-dri
 
 | What | Code | Pipeline | Output in `data/` |
 |---|---|---|---|
-| Metadata audit (no pixels) | `benchmark_audit.py`, `figures/fig_audit.py` | | `results/metadata_audit.txt` |
+| Metadata audit (no pixels), files as stored and as scored (after the JPEG q95 re-save, suffix `_after_q95_resave`) | `benchmark_audit.py`, `figures/fig_audit.py` | | `results/metadata_audit.txt` |
+| Reproduction checks against published numbers (DDA's and SPAI's papers) | `repro_check.py`, `npr_variant_check.py`, `e1_score.py --sets eg_raw_fake` | | `results/reproduction_checks.txt`, `scores/reproduction_checks.csv.gz` |
 | Size-matched GenImage and its processing-only control | `gi_match.py` (`make`) | `revision_gi.sh` | `matching/genimage_size_matched.csv` |
 | EvalGEN with RAISE reals (downscaled, cropped to 1024 px) | `evalgen_prep.py` | `revision_eg.sh` | `matching/evalgen_reals.csv` |
 | Released detectors and our methods on every version | `e1_score.py`, `e1_report.py`, `e1_stats.py`, `figures/fig_e1_slope.py` | `revision_eg.sh`, `revision_gi.sh` | `scores/e1_<version>.csv.gz`, `results/e1_*.txt`, `results/stats_*.csv` |
@@ -144,8 +145,9 @@ VISION file adds `device` and `scene` (the version-independent scene id used for
 
 ## Licence
 
-Code: MIT (see `LICENSE`). The Figure 1 crops come from Synthbuster (Bammey, 2024; CC BY-NC-SA 4.0) and RAISE-1k
-(Dang-Nguyen et al., 2015) and remain under those terms. The scores and lists are derived from GenImage, Chameleon, Synthbuster (CC BY-NC-SA 4.0) and RAISE-1k;
+Code: MIT (see `LICENSE`). The overview figure draws pictograms instead of dataset images; the crops of a Synthbuster
+image (CC BY-NC-SA 4.0) and a RAISE-1k photograph used by its photo version (`FIG1_PHOTOS=1`) are no longer distributed.
+The scores and lists are derived from GenImage, Chameleon, Synthbuster (CC BY-NC-SA 4.0) and RAISE-1k;
 use them under those datasets' terms.
 
 ## Citation

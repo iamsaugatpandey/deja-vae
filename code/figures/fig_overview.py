@@ -22,7 +22,7 @@ from style import *          # noqa: F401,F403
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 from PIL import Image
 
-AS = Path("paper/figures/fig1_assets")
+AS = Path("figures/fig1_assets")
 LAYERS = list(range(2, 25, 2))
 
 
@@ -44,14 +44,39 @@ def thumb(fig, path, x, y, s, label=None):
     return ax
 
 
+PHOTOS = os.environ.get("FIG1_PHOTOS") == "1"   # default: pictograms. The photo version needs fig1_assets/*.png (crops of a
+#   Synthbuster image and a RAISE photograph), which are not distributed: RAISE is licensed for research use only.
+
+
+def pictogram(fig, x, y, s, tint, label=None):
+    """A drawn stand-in for an image: sky, sun and two hills, in the row's tint. Used instead of the actual
+    Synthbuster/RAISE images so that the figure carries no third-party image content."""
+    from matplotlib.patches import Circle, Polygon
+    W, H = fig.get_size_inches()
+    ax = fig.add_axes([x, y, s, s * W / H]); ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.set_xticks([]); ax.set_yticks([])
+    ax.add_patch(Rectangle((0, 0), 1, 1, facecolor=tint, alpha=0.12, lw=0))
+    ax.add_patch(Circle((0.74, 0.74), 0.09, facecolor=tint, alpha=0.45, lw=0))
+    ax.add_patch(Polygon([(0, 0), (0, 0.32), (0.32, 0.66), (0.62, 0.3), (0.62, 0)], facecolor=tint, alpha=0.55, lw=0))
+    ax.add_patch(Polygon([(0.38, 0), (0.7, 0.46), (1, 0.18), (1, 0)], facecolor=tint, alpha=0.8, lw=0))
+    for sp in ax.spines.values():
+        sp.set_visible(True); sp.set_color(MUTED); sp.set_linewidth(0.5)
+    if label:
+        ax.set_title(label, fontsize=6.3, fontweight="normal", color=INK2, pad=2, loc="center")
+    return ax
+
+
 def panel_a(fig):
     W, H = fig.get_size_inches(); s = 0.105; hs = s * W / H
     yr, yf = 0.735, 0.515                      # bottom of the real / generated rows
     fig.text(0.0, 0.985, "a  Measuring the déjà vu", fontsize=8.5, fontweight="bold", va="top")
     for y, lab in ((yr, "real photograph"), (yf, "generated (SDXL)")):
         fig.text(0.0, y + hs / 2, lab, fontsize=6.6, color=INK2, va="center", rotation=90, ha="left")
-    thumb(fig, AS / "real_view.png", 0.03, yr, s, "image $v$"); thumb(fig, AS / "fake_view.png", 0.03, yf, s)
-    thumb(fig, AS / "real_copy_v10.png", 0.235, yr, s, "copy $R(v)$"); thumb(fig, AS / "fake_copy_v10.png", 0.235, yf, s)
+    if PHOTOS:
+        thumb(fig, AS / "real_view.png", 0.03, yr, s, "image $v$"); thumb(fig, AS / "fake_view.png", 0.03, yf, s)
+        thumb(fig, AS / "real_copy_v10.png", 0.235, yr, s, "copy $R(v)$"); thumb(fig, AS / "fake_copy_v10.png", 0.235, yf, s)
+    else:
+        pictogram(fig, 0.03, yr, s, MUTED, "image $v$"); pictogram(fig, 0.03, yf, s, BLUE)
+        pictogram(fig, 0.235, yr, s, MUTED, "copy $R(v)$"); pictogram(fig, 0.235, yf, s, BLUE)
     for y in (yr, yf):
         arrow(fig, 0.14, y + hs / 2, 0.23, y + hs / 2)
     fig.text(0.185, yf + hs + 0.045, "autoencoder\nround trip $R$\n(native crop)", ha="center", va="center",
@@ -138,8 +163,8 @@ def main():
     panel_a(fig)
     ax_b = fig.add_axes([0.06, 0.07, 0.33, 0.30]); panel_b(fig, ax_b)
     ax_c = fig.add_axes([0.47, 0.07, 0.52, 0.30]); panel_c(fig, ax_c)
-    fig.savefig("paper/figures/overview.pdf", bbox_inches=None); fig.savefig("paper/figures/overview.png", dpi=220, bbox_inches=None)
-    print("wrote paper/figures/overview.pdf")
+    fig.savefig("figures/overview.pdf", bbox_inches=None); fig.savefig("figures/overview.png", dpi=220, bbox_inches=None)
+    print("wrote figures/overview.pdf")
 
 
 if __name__ == "__main__":
