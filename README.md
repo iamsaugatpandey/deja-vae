@@ -145,8 +145,8 @@ VISION file adds `device` and `scene` (the version-independent scene id used for
 
 ## Licence
 
-Code: MIT (see `LICENSE`). The overview figure draws pictograms instead of dataset images; the crops of a Synthbuster
-image (CC BY-NC-SA 4.0) and a RAISE-1k photograph used by its photo version (`FIG1_PHOTOS=1`) are no longer distributed.
+Code: MIT (see `LICENSE`). The overview figure uses a CC0 photograph from Wikimedia Commons and an SDXL image generated
+for this purpose (`code/figures/fig1_assets_open/SOURCES.txt`, `make_fig1_assets.py`); no dataset images are distributed.
 The scores and lists are derived from GenImage, Chameleon, Synthbuster (CC BY-NC-SA 4.0) and RAISE-1k;
 use them under those datasets' terms.
 

@@ -57,7 +57,7 @@ def main():
     a.set_ylabel("TPR at 5% FPR (%)"); a.set_ylim(50, 101)
     a.set_title("a   Detection after processing", pad=6)
     b.axhline(5, color=MUTED, lw=0.7, ls=(0, (2, 2)), zorder=0)
-    b.annotate("nominal 5%", (-0.45, 5), xytext=(0, 2), textcoords="offset points", ha="left", va="bottom", fontsize=6.5, color=MUTED)
+    b.annotate("nominal 5%", (-0.5, 5), xytext=(1, -5), textcoords="offset points", ha="left", va="top", fontsize=6.5, color=MUTED)
     b.set_ylabel("FPR on processed reals (%)"); b.set_ylim(0, 31)
     b.set_title("b   False alarms if the threshold is not re-set", pad=6)
     # direct labels (no legend box): name each series once, next to its 'none' point in panel a

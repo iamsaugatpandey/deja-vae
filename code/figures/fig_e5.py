@@ -34,13 +34,18 @@ def main():
                 if (t, d, v) not in D:
                     continue
                 p, lo, hi = D[(t, d, v)]; y = i + off[k]
-                ax.plot([lo, hi], [y, y], color=c, lw=0.8, alpha=0.9)
+                ax.plot([lo, hi], [y, y], color=c, lw=0.8, alpha=0.9, clip_on=False)
                 ax.plot([p], [y], m, ms=4.2, color=c, mfc=c if filled else "white", mec=c, mew=0.9, zorder=3,
-                        label=lab if (i == 0 and ax is axes[0]) else None)
+                        clip_on=False, label=lab if (i == 0 and ax is axes[0]) else None)
         if t == "camera":
             zero_line(ax, 5, "nominal 5%")
         ax.set_title(title, fontsize=7.5); ax.set_xlabel("Real photos flagged as generated (%)")
-        ax.set_xlim(0, 100); ax.grid(axis="x", color=GRID, lw=0.5); ax.set_axisbelow(True)
+        # square-root scale: most false-alarm rates lie between 0 and 10%, where a linear axis stacks them on the spine
+        ax.set_xscale("function", functions=(lambda x: np.sqrt(np.clip(x, 0, None)), lambda x: np.square(x)))
+        ax.set_xlim(0, 100); ax.set_xticks([0, 1, 5, 10, 20, 40, 60, 80, 100]); ax.set_xticklabels(["0", "1", "5", "10", "20", "40", "60", "80", "100"])
+        ax.xaxis.set_minor_locator(plt.NullLocator())
+        ax.spines["left"].set_position(("outward", 6)); ax.spines["bottom"].set_position(("outward", 3))
+        ax.grid(axis="x", color=GRID, lw=0.5); ax.set_axisbelow(True)
     axes[0].set_yticks(range(len(dets))); axes[0].set_yticklabels([SHORT.get(d, d) for d in dets]); axes[0].invert_yaxis()
     axes[0].tick_params(axis="y", length=0)
     fig.legend(loc="lower center", ncol=5, fontsize=6.5, bbox_to_anchor=(0.5, -0.075), handletextpad=0.3, columnspacing=1.2)

@@ -1,11 +1,10 @@
 """Figure 1 (v2): what the paper measures, and its two central findings.
-(a) The instrument, on real data. The Synthbuster SDXL image at the MEDIAN fixed-point score of its class (runs/sb/bank,
-    SDXL 1.0 autoencoder) and the RAISE photograph it was prompted from (geometry-matched; 68th percentile of the real
-    scores) are copied by an
-    autoencoder round trip R at native resolution; the copies are visually identical to the inputs. A frozen DINOv3
-    reads both; the bars give how far the class token moves (cosine distance, mean over layers 8-18). The generated
-    image barely moves under its own decoder (SDXL 1.0), and moves 3x more under the 0.9 version of the same
-    autoencoder. Outputs: the training-free score and the two heads trained on real images only.
+(a) The instrument, on images that may be published openly: a CC0 camera photograph (Wikimedia Commons) and an SDXL
+    image we generated from a description of it, decoded with SDXL's 1.0 autoencoder (the median of three seeds;
+    make_fig1_assets.py). Both are copied by an autoencoder round trip R at native resolution; the copies are visually
+    identical to the inputs. A frozen DINOv3 reads both; the bars give how far the class token moves (cosine distance,
+    mean over layers 8-18) under the generated image's own decoder (SDXL 1.0) and under the 0.9 version of it.
+    Outputs: the training-free score and the two heads trained on real images only.
 (b) Where: AUROC of the training-free signal per DINOv3 layer, GenImage mean over 8 generators (blue, 95% band), and
     blurred reals vs reals (grey; high = mistakes blur for generation). Cache: runs/dv/layers_full/boot.npz.
 (c) Which decoder: training-free TPR at 5% FPR with the generator's exact decoder (filled) vs a near-identical
@@ -22,7 +21,7 @@ from style import *          # noqa: F401,F403
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 from PIL import Image
 
-AS = Path("figures/fig1_assets")
+AS = Path("figures/fig1_assets_open")   # CC0 photograph + our own SDXL image (make_fig1_assets.py)
 LAYERS = list(range(2, 25, 2))
 
 
@@ -34,9 +33,15 @@ def arrow(fig, x0, y0, x1, y1, text=None, dy=0.0):
                  linespacing=1.15)
 
 
-def thumb(fig, path, x, y, s, label=None):
+def thumb(fig, path, x, y, s, label=None, box=None):
+    """box: side of the centred native-resolution view, as a fraction of the image, outlined on the thumbnail."""
     W, H = fig.get_size_inches()
-    ax = fig.add_axes([x, y, s, s * W / H]); ax.imshow(Image.open(path)); ax.set_xticks([]); ax.set_yticks([])
+    im = Image.open(path).convert("RGB"); w, h = im.size
+    ax = fig.add_axes([x, y, s, s * W / H]); ax.imshow(im.resize((512, 512), Image.LANCZOS) if w > 512 else im)
+    ax.set_xticks([]); ax.set_yticks([])
+    if box:
+        n = 512 if w > 512 else w; b = box * n
+        ax.add_patch(Rectangle(((n - b) / 2, (n - b) / 2), b, b, fill=False, edgecolor="white", lw=0.9))
     for sp in ax.spines.values():
         sp.set_visible(True); sp.set_color(MUTED); sp.set_linewidth(0.5)
     if label:
@@ -44,8 +49,7 @@ def thumb(fig, path, x, y, s, label=None):
     return ax
 
 
-PHOTOS = os.environ.get("FIG1_PHOTOS") == "1"   # default: pictograms. The photo version needs fig1_assets/*.png (crops of a
-#   Synthbuster image and a RAISE photograph), which are not distributed: RAISE is licensed for research use only.
+PHOTOS = os.environ.get("FIG1_PICTOGRAMS") != "1"   # default: the openly licensed images; FIG1_PICTOGRAMS=1 draws pictograms
 
 
 def pictogram(fig, x, y, s, tint, label=None):
@@ -72,8 +76,9 @@ def panel_a(fig):
     for y, lab in ((yr, "real photograph"), (yf, "generated (SDXL)")):
         fig.text(0.0, y + hs / 2, lab, fontsize=6.6, color=INK2, va="center", rotation=90, ha="left")
     if PHOTOS:
-        thumb(fig, AS / "real_view.png", 0.03, yr, s, "image $v$"); thumb(fig, AS / "fake_view.png", 0.03, yf, s)
-        thumb(fig, AS / "real_copy_v10.png", 0.235, yr, s, "copy $R(v)$"); thumb(fig, AS / "fake_copy_v10.png", 0.235, yf, s)
+        thumb(fig, AS / "real_full.png", 0.03, yr, s, "image (box: view $v$)", box=0.25)
+        thumb(fig, AS / "fake_full.png", 0.03, yf, s, box=0.25)
+        thumb(fig, AS / "real_copy_v10.png", 0.235, yr, s, "copy $R(v)$ of the view"); thumb(fig, AS / "fake_copy_v10.png", 0.235, yf, s)
     else:
         pictogram(fig, 0.03, yr, s, MUTED, "image $v$"); pictogram(fig, 0.03, yf, s, BLUE)
         pictogram(fig, 0.235, yr, s, MUTED, "copy $R(v)$"); pictogram(fig, 0.235, yf, s, BLUE)
@@ -98,7 +103,7 @@ def panel_a(fig):
     # read-out: how far the class token moves
     d = np.load(AS / "layer_dist.npz"); Lm = [8, 10, 12, 14, 16, 18]
     m = {k: float(np.mean(d[k][Lm])) for k in d}
-    bx, bw = 0.625, 0.10; sc = bw / 0.025
+    bx = 0.625; sc = 0.15 / max(m["real_v10"], m["fake_v09"])      # longest bar 0.15 of the figure width
     fig.text(bx, yr + hs + 0.012, "how far it moves\n$1-\\cos(\\phi(v), \\phi(R(v)))$", fontsize=6.2, color=INK2,
              va="bottom", linespacing=1.15)
     arrow(fig, 0.583, yr + hs / 2, bx - 0.004, yr + hs / 2); arrow(fig, 0.583, yf + hs / 2, bx - 0.004, yf + hs / 2)
