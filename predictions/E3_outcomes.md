@@ -1,6 +1,6 @@
 # E3: outcomes of the pre-registered predictions
 
-Predictions: `E3_predictions.md` (commit 4ecfdaf, 2026-11-23 12:16 ET, before any image was generated).
+Predictions: `E3_predictions.md` (commit 41be8c4, 2026-11-23 12:16 ET, before any image was generated; 4ecfdaf before the history rewrite of 2026-11-28, see README).
 Images generated 2026-11-23 (`e3_generate.py`); bank and detector scored 2026-11-24 (`e3_bank.py run`, `e3_bank.py detector`).
 Full output: `runs/e3/bank/report.txt`, `runs/e3/detector.txt`.
 

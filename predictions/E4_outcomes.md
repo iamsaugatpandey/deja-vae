@@ -1,6 +1,6 @@
 # E4: outcomes
 
-## 1. Blindness test with copies from SD1's original decoder (pre-registered: `E4_zhou_predictions.md`, commit 8931a68)
+## 1. Blindness test with copies from SD1's original decoder (pre-registered: `E4_zhou_predictions.md`, commit 8ae9783; 8931a68 before the history rewrite of 2026-11-28, see README)
 
 Run 2026-11-26 (`code/review_copies.py --ae sd1`, `--ae ftmse`; `code/zhou_compare.py`). The same 1,000 GenImage test reals,
 copied once at full resolution with each autoencoder. Share flagged at the paper's 5% threshold (%), three seeds averaged;

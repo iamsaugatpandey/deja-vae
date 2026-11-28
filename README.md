@@ -143,6 +143,20 @@ VISION file adds `device` and `scene` (the version-independent scene id used for
 (Shullani et al., 2017; CC BY-SA 4.0) is downloaded from its authors' server with `vision_download.sh` and the list in
 `data/matching/vision_subset.txt`. EvalGEN is distributed by the DDA authors (Chen et al., 2025).
 
+## History note (2026-11-28)
+
+The repository's history was rewritten on 2026-11-28 to remove six small crops of a Synthbuster image and a RAISE-1k
+photograph (non-commercial licences) that the first commit had included for a figure. Nothing else changed: every
+commit keeps its author, date, message and all other files. Commit identifiers changed accordingly; the ones cited in
+the papers map as follows.
+
+| Commit | Before | After |
+|---|---|---|
+| E3 predictions (Sana 600M, Kandinsky 2.2), 2026-11-23 12:16 ET | `4ecfdaf` | `41be8c4` |
+| E3 outcomes, 2026-11-25 | `1994df6` | `712c99b` |
+| E4 predictions (blindness test), 2026-11-26 | `8931a68` | `8ae9783` |
+| E4 outcomes, 2026-11-26 | `d85eef8` | `c60bc56` |
+
 ## Licence
 
 Code: MIT (see `LICENSE`). The overview figure uses a CC0 photograph from Wikimedia Commons and an SDXL image generated
